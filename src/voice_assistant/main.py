@@ -20,7 +20,7 @@ def create_app() -> FastAPI:
 
     app = FastAPI(
         title="Netflix Voice Assistant API v1",
-        description="АПИ голосового ассистента.",
+        description="АПИ голосового ассистента Netflix.",
         servers=[
             {"url": server_host}
             for server_host in settings.SERVER_HOSTS
