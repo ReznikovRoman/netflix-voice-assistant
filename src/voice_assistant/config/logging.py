@@ -1,7 +1,7 @@
 import logging
 
 
-async def configure_logger() -> None:
+def configure_logger() -> None:
     """Базовая настройка встроенного логгера."""
     logging.basicConfig(
         level=logging.INFO,
