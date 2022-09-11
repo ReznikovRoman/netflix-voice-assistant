@@ -10,7 +10,11 @@ from voice_assistant.integrations.movies.stubs import MovieClientStub
 class Container(containers.DeclarativeContainer):
     """Контейнер с зависимостями."""
 
-    wiring_config = containers.WiringConfiguration()
+    wiring_config = containers.WiringConfiguration(
+        modules=[
+            "voice_assistant.api.v1.handlers.assistant",
+        ],
+    )
 
     config = providers.Configuration()
 
