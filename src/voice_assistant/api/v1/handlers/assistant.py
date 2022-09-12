@@ -3,6 +3,7 @@ from http import HTTPStatus
 from dependency_injector.wiring import Provide, inject
 
 from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel
 
 from voice_assistant.containers import Container
 from voice_assistant.domain.assistant import AssistantProviderDispatcher
@@ -12,6 +13,29 @@ router = APIRouter(
     tags=["Assistant"],
 )
 
+class Nlu(BaseModel):
+    tokens: list
+    intents: dict
+
+
+class Request(BaseModel):
+    command: str
+    original_utterance: str
+    nlu: Nlu
+
+
+class AliceReq(BaseModel):
+    meta: dict
+    request: Request
+    session: dict
+    version: str
+
+
+class AliceResp(BaseModel):
+    meta: dict
+    response: dict
+    session: dict
+    version: str
 
 @router.post("/requests/process", summary="Webhook для ассистента", status_code=HTTPStatus.OK)
 @inject
