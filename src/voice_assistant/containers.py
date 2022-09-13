@@ -7,6 +7,10 @@ from voice_assistant.integrations import movies
 from voice_assistant.integrations.movies.stubs import MovieClientStub
 
 
+async def dummy_resource() -> None:
+    """Функция-ресурс для перезаписи в DI контейнере."""
+
+
 class Container(containers.DeclarativeContainer):
     """Контейнер с зависимостями."""
 
@@ -19,6 +23,7 @@ class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
 
     logging = providers.Resource(configure_logger)
+    _delete_me = providers.Resource(dummy_resource)  # TODO: удалить после добавления асинхронного ресурса
 
     # Integrations
 
@@ -51,7 +56,3 @@ def override_providers(container: Container) -> Container:
         return container
     container.movie_client.override(providers.Singleton(MovieClientStub))
     return container
-
-
-async def dummy_resource() -> None:
-    """Функция-ресурс для перезаписи в DI контейнере."""
