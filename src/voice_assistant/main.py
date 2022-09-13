@@ -1,7 +1,6 @@
 import logging
 
 from fastapi import FastAPI, Request
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import ORJSONResponse
 
 from voice_assistant.api.urls import api_router
@@ -30,10 +29,6 @@ def create_app() -> FastAPI:
         openapi_url=f"{settings.API_V1_STR}/openapi.json",
         default_response_class=ORJSONResponse,
         debug=settings.DEBUG,
-    )
-
-    app.add_middleware(
-        TrustedHostMiddleware, allowed_hosts=["*.localhost", "localhost", "*.eu.ngrok.io", "eu.ngrok.io"],
     )
 
     @app.exception_handler(NetflixVoiceAssistantError)
