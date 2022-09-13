@@ -17,8 +17,8 @@ services:
       && python -m uvicorn voice_assistant.main:create_app --factory --reload --host 0.0.0.0 --port $NVA_SERVER_PORT"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.voice_assistant_api.rule=Host(`api-voice-assistant.localhost`,`traefik`)"
-      - "traefik.http.routers.voice_assistant_api.entrypoints=web"
+      - "traefik.http.routers.voice_assistant_api.rule=Host(`api-voice-assistant.localhost`) || Host(`traefik`) || HostRegexp(`eu.ngrok.io`,`{subhost:[a-zA-Z0-9-]+}.eu.ngrok.io`)"
+      - "traefik.http.routers.voice_assistant_api.entrypoints=web,web_secure"
 
   traefik:
     image: traefik:v2.8
@@ -27,6 +27,7 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.web_secure.address=:443"
       - "--tracing.jaeger=true"
       - "--tracing.jaeger.samplingParam=0"
       - "--tracing.jaeger.traceContextHeaderName=X-Request-Id"
