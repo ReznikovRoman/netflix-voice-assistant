@@ -10,7 +10,7 @@ class AssistantService(abc.ABC):
     """Базовый сервис голосового ассистента."""
 
     @abc.abstractmethod
-    def process_request(self):
+    def process_request(self, context):
         """Обработка запроса пользователя."""
 
 
