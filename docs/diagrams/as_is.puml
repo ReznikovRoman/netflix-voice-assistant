@@ -1,0 +1,114 @@
+@startuml
+!theme mars
+skinparam componentStyle uml2
+skinparam defaultFontName Segoe UI
+skinparam backgroundColor motivation
+
+title Netflix [AS IS]
+
+agent "Client" as base_client
+cloud "Sendgrid" as sendgrid
+cloud "Pusher" as pusher
+cloud "Twilio" as twilio
+
+frame NetflixAdmin {
+    cloud "Nginx" as nginx_admin
+    component "Admin" as admin_admin
+    database "Postgres" as postgres_admin
+
+    nginx_admin <-down-> admin_admin
+    admin_admin <-down-> postgres_admin
+}
+
+frame NetflixETL {
+    database "Elasticsearch" as elasticsearch_etl
+    component "ETL Pipeline" as etl_pipeline
+
+    etl_pipeline <-down- postgres_admin
+    etl_pipeline -down-> elasticsearch_etl
+}
+
+frame NetflixMoviesAPI {
+    cloud "Traefik" as traefik_movies
+    component "API" as api_movies
+    database "Redis" as redis_movies
+
+    api_movies <-up-> traefik_movies
+    api_movies <-down- elasticsearch_etl
+    api_movies <-down-> redis_movies: "Кэширование"
+}
+
+frame NetflixAuthAPI {
+    cloud "Traefik" as traefik_auth
+    cloud "auth0" as auth0_auth
+    component "API" as api_auth
+    database "Postgres" as postgres_auth
+    database "Redis" as redis_auth
+
+    api_auth <-up-> traefik_auth
+    api_auth <-up-> auth0_auth: "Защита приватного АПИ ролей"
+    api_auth <-down-> postgres_auth
+    api_auth <-down-> redis_auth: "Хранение использованных JWT"
+}
+
+frame NetflixUGC {
+    cloud "Traefik" as traefik_ugc
+    component "API" as api_ugc
+    component "ClickHouse \nKafka integration" as consumer_clickhouse
+    component "Redis Consumer" as consumer_ugc_redis
+    component "Producer" as producer_ugc
+    queue "Kafka" as kafka_ugc
+    database "Redis Stack" as redis_stack_ugc
+    database "MongoDB" as mongo_ugc
+    database "ClickHouse" as clickhouse_ugc
+
+    api_ugc <-up-> traefik_ugc
+    api_ugc <-down- redis_stack_ugc
+    api_ugc <-down-> mongo_ugc: "Пользовательские рецензии"
+    api_ugc -down-> producer_ugc
+    producer_ugc -down-> kafka_ugc: "Создание сообщений о действиях пользователя. \nНапример, добавление фильма в закладки"
+    kafka_ugc -down-> consumer_ugc_redis
+    consumer_ugc_redis -down-> redis_stack_ugc: "Пользовательский контент"
+    kafka_ugc -down-> consumer_clickhouse: "Обработка различных действий пользователя"
+    consumer_clickhouse -down-> clickhouse_ugc: "Данные для аналитики"
+}
+
+frame NetflixNotifications {
+    cloud "Traefik" as traefik_notifications
+    component "API" as api_notifications
+    queue "Message Queue" as queue_notifications
+    component "Scheduler" as scheduler_notifications
+    database "Redis Stack" as redis_stack_notifications
+
+    frame WorkerGroupNotifications {
+        component "Worker 1" as worker_1_notifications
+        component "Worker 2" as worker_2_notifications
+        component "Worker N" as worker_n_notifications
+    }
+
+    api_notifications <-up-> traefik_notifications
+    api_notifications <-down-> redis_stack_notifications
+    api_notifications -down-> queue_notifications: "Отправка уведомления"
+    api_notifications -down-> scheduler_notifications: "Настройка уведомлений по расписанию"
+    queue_notifications <-down- WorkerGroupNotifications: "Обработка сообщений из очереди"
+    scheduler_notifications -down-> queue_notifications
+    WorkerGroupNotifications <-down-> redis_stack_notifications
+
+    note right of queue_notifications
+    Очередь сообщений Celery
+    end note
+    note bottom of redis_stack_notifications
+    Данные по уведомлениям
+    end note
+}
+
+NetflixNotifications -up-> sendgrid: "Отправка писем"
+NetflixNotifications -up-> pusher: "Отправка push-уведомлений"
+NetflixNotifications -up-> twilio: "Отправка СМС"
+
+base_client <-down-> nginx_admin: "Управление фильмами, актерами и жанрами"
+base_client <-down-> traefik_movies: "Основное АПИ онлайн-кинотеатра"
+base_client <-down-> traefik_auth: "Работа с пользователями и управление ролями"
+base_client <-down-> traefik_ugc: "Работа с пользовательским контентом"
+base_client <-down-> traefik_notifications: "Работа с уведомлениями"
+@enduml
