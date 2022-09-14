@@ -1,7 +1,9 @@
 from http import HTTPStatus
 
 from dependency_injector.wiring import Provide, inject
+
 from fastapi import APIRouter, Depends, Request
+
 from voice_assistant.containers import Container
 from voice_assistant.domain.assistant import AssistantProviderDispatcher
 from voice_assistant.domain.assistant.enums import AssistantProviderSlug
