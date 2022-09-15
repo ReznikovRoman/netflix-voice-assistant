@@ -1,4 +1,4 @@
-from .dispatcher import AssistantProviderDispatcher
+from .dispatchers import AssistantProviderDispatcher
 from .enums import AssistantProviderSlug
 
 __all__ = [

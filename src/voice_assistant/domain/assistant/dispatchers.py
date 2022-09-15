@@ -2,8 +2,8 @@ from dependency_injector.providers import Factory
 
 from .enums import AssistantProviderSlug
 from .exceptions import UnknownAssistantProvider
+from .schemas import AssistantResponse
 from .services import AssistantService, get_assistant_service
-from .types import AssistantResponse
 
 
 class AssistantProviderDispatcher:

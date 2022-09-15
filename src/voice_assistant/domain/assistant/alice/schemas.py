@@ -4,7 +4,7 @@ from pydantic import Field
 
 from voice_assistant.common.schemas import BaseOrjsonSchema
 
-from ..types import AssistantRequest, AssistantResponse
+from ..schemas import AssistantRequest, AssistantResponse
 
 # TODO: добавить аннотации TypedDict для сущностей Яндекс.Диалогов
 #  - meta, session, version, response

@@ -4,7 +4,7 @@ from dependency_injector.errors import NoSuchProviderError
 from dependency_injector.providers import Factory
 
 from .exceptions import UnknownAssistantProvider
-from .types import AssistantRequest, AssistantResponse
+from .schemas import AssistantRequest, AssistantResponse
 
 
 class AssistantService(abc.ABC):
