@@ -1,44 +1,38 @@
 import enum
 
-from orjson import orjson
-from pydantic import BaseModel
+from voice_assistant.common.schemas import BaseOrjsonSchema
+
+from ..types import AssistantRequest, AssistantResponse
+
+# TODO: добавить аннотации TypedDict для сущностей Яндекс.Диалогов
+#  - meta, session, version, response
 
 
-def orjson_dumps(value, *, default):
-    return orjson.dumps(value, default=default).decode()
+class IntentChoice(str, enum.Enum):
+    """Список намерений в Яндекс.Диалогах."""
+
+    FIND_FILM = "find_film"
+    FILM_ACTORS = "actors_in_the_film"
+    FILM_DIRECTORS = "film_director"
+    FILM_DURATION = "movie_duration"
 
 
-class BaseOrjsonSchema(BaseModel):
-    """Базовая схема ответа с orjson."""
-
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-
-
-class IntentsEnum(enum.Enum):
-    find_film = "find_film"
-    actors_in_the_film = "actors_in_the_film"
-    film_director = "film_director"
-    movie_duration = "movie_duration"
-
-
-class Nlu(BaseModel):
-    """Поле nlu в запросе от Яндекс.Диалогов."""
+class NluField(BaseOrjsonSchema):
+    """Поле `nlu` в запросе от Яндекс.Диалогов."""
 
     tokens: list
-    intents: dict[IntentsEnum, dict] | None
+    intents: dict[IntentChoice, dict] | None = None
 
 
-class RequestField(BaseModel):
-    """Поле request в запросе от Яндекс.Диалогов."""
+class RequestField(BaseOrjsonSchema):
+    """Поле `request` в запросе от Яндекс.Диалогов."""
 
     command: str
     original_utterance: str
-    nlu: Nlu
+    nlu: NluField
 
 
-class AliceRequest(BaseOrjsonSchema):
+class AliceRequest(AssistantRequest):
     """Запрос от Яндекс.Диалогов."""
 
     meta: dict
@@ -47,7 +41,7 @@ class AliceRequest(BaseOrjsonSchema):
     version: str
 
 
-class AliceResponse(BaseOrjsonSchema):
+class AliceResponse(AssistantResponse):
     """Ответ для Яндекс.Диалогов."""
 
     meta: dict
