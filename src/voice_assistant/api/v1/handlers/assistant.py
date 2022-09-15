@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post("/requests/process", summary="Webhook для провайдера", status_code=HTTPStatus.OK)
+@router.post("/requests/process/{provider}", summary="Webhook для провайдера", status_code=HTTPStatus.OK)
 @inject
 async def process_user_request(
     provider: AssistantProviderSlug,
