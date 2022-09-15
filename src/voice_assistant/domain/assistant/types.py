@@ -1,13 +1,9 @@
-from pydantic import BaseModel
+from voice_assistant.common.schemas import BaseOrjsonSchema
 
 
-class AssistantRequest(BaseModel):
-    """Базовый класс запроса."""
-
-    pass
+class AssistantRequest(BaseOrjsonSchema):
+    """Базовый класс запроса от провайдера."""
 
 
-class AssistantResponse(BaseModel):
-    """Базовый класс ответа."""
-
-    pass
+class AssistantResponse(BaseOrjsonSchema):
+    """Базовый класс ответа для провайдера."""
