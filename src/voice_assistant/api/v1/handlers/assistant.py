@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post("/requests/process", summary="Webhook для ассистента", status_code=HTTPStatus.OK)
+@router.post("/requests/process", summary="Webhook для провайдера", status_code=HTTPStatus.OK)
 @inject
 async def process_user_request(
     request: Request,
@@ -21,5 +21,5 @@ async def process_user_request(
     provider_dispatcher: AssistantProviderDispatcher = Depends(Provide[Container.assistant_dispatcher]),
 ):
     """Обработка запроса от пользователя."""
-    request_body = await request.json()
-    return await provider_dispatcher.dispatch_provider(provider, request_body=request_body)
+    provider_data = await request.json()
+    return await provider_dispatcher.dispatch_provider(provider, data=provider_data)
