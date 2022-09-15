@@ -21,4 +21,5 @@ async def process_user_request(
     provider_dispatcher: AssistantProviderDispatcher = Depends(Provide[Container.assistant_dispatcher]),
 ):
     """Обработка запроса от пользователя."""
-    return await provider_dispatcher.dispatch_provider(provider, request=request)
+    request_body = await request.json()
+    return await provider_dispatcher.dispatch_provider(provider, request_body=request_body)
