@@ -1,0 +1,60 @@
+@startuml
+!theme mars
+skinparam componentStyle uml2
+skinparam defaultFontName Segoe UI
+skinparam backgroundColor motivation
+
+title Netflix [Voice Assistant]
+
+agent "Client" as base_client
+cloud "Traefik" as base_traefik
+
+cloud "Yandex.Alice" as yandex_provider_voice_assistant
+
+frame NetflixAdmin {
+    cloud "Nginx" as nginx_admin
+    component "Admin" as admin_admin
+    database "Postgres" as postgres_admin
+
+    nginx_admin <-down-> admin_admin
+    admin_admin <-down-> postgres_admin
+}
+
+frame NetflixETL {
+    database "Elasticsearch" as elasticsearch_etl
+    component "ETL Pipeline" as etl_pipeline
+
+    etl_pipeline <-down- postgres_admin
+    etl_pipeline -down-> elasticsearch_etl
+}
+
+frame NetflixMoviesAPI {
+    component "API" as api_movies
+    database "Redis" as redis_movies
+
+    api_movies <-up-> base_traefik: "АПИ фильмов"
+    api_movies <-down- elasticsearch_etl
+    api_movies <-down-> redis_movies: "Кэширование"
+}
+
+frame NetflixVoiceAssistant {
+    component "API" as api_voice_assistant
+
+    api_voice_assistant <-up-> base_traefik: "Обработка запроса\n от провайдера"
+}
+
+component NetflixMoviesClient
+
+yandex_provider_voice_assistant <-down-> base_traefik: "Голосовой ассистент"
+
+NetflixMoviesAPI <-up-> NetflixMoviesClient
+
+base_client <-down-> nginx_admin: "Управление фильмами, актерами и жанрами"
+base_client <-down-> base_traefik: "Основное АПИ онлайн-кинотеатра"
+
+NetflixMoviesClient <-down-> NetflixVoiceAssistant: "Получение данных \n для ответа ассистенту"
+
+NetflixAdmin -[hidden]-> NetflixETL
+NetflixETL -[hidden]-> NetflixMoviesAPI
+NetflixMoviesAPI -[hidden]-> NetflixVoiceAssistant
+@enduml

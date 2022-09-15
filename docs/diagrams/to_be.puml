@@ -7,6 +7,9 @@ skinparam backgroundColor motivation
 title Netflix [TO BE]
 
 agent "Client" as base_client
+cloud "Traefik" as base_traefik
+
+cloud "auth0" as auth0
 
 cloud "Sendgrid" as sendgrid
 cloud "Pusher" as pusher
@@ -32,30 +35,26 @@ frame NetflixETL {
 }
 
 frame NetflixMoviesAPI {
-    cloud "Traefik" as traefik_movies
     component "API" as api_movies
     database "Redis" as redis_movies
 
-    api_movies <-up-> traefik_movies
+    api_movies <--up-> base_traefik: "АПИ фильмов"
     api_movies <-down- elasticsearch_etl
     api_movies <-down-> redis_movies: "Кэширование"
 }
 
 frame NetflixAuthAPI {
-    cloud "Traefik" as traefik_auth
-    cloud "auth0" as auth0_auth
     component "API" as api_auth
     database "Postgres" as postgres_auth
     database "Redis" as redis_auth
 
-    api_auth <-up-> traefik_auth
-    api_auth <-up-> auth0_auth: "Защита приватного АПИ ролей"
+    api_auth <--up-> base_traefik: "Работа с пользователями и управление ролями"
+    api_auth <-up-> auth0: "Защита приватного АПИ ролей"
     api_auth <-down-> postgres_auth
     api_auth <-down-> redis_auth: "Хранение использованных JWT"
 }
 
 frame NetflixUGC {
-    cloud "Traefik" as traefik_ugc
     component "API" as api_ugc
     component "ClickHouse \nKafka integration" as consumer_clickhouse
     component "Redis Consumer" as consumer_ugc_redis
@@ -65,7 +64,7 @@ frame NetflixUGC {
     database "MongoDB" as mongo_ugc
     database "ClickHouse" as clickhouse_ugc
 
-    api_ugc <-up-> traefik_ugc
+    api_ugc <--up-> base_traefik: "Работа с пользовательским контентом"
     api_ugc <-down- redis_stack_ugc
     api_ugc <-down-> mongo_ugc: "Пользовательские рецензии"
     api_ugc -down-> producer_ugc
@@ -77,7 +76,6 @@ frame NetflixUGC {
 }
 
 frame NetflixNotifications {
-    cloud "Traefik" as traefik_notifications
     component "API" as api_notifications
     queue "Message Queue" as queue_notifications
     component "Scheduler" as scheduler_notifications
@@ -89,7 +87,7 @@ frame NetflixNotifications {
         component "Worker N" as worker_n_notifications
     }
 
-    api_notifications <-up-> traefik_notifications
+    api_notifications <--up-> base_traefik: "Работа с уведомлениями"
     api_notifications <-down-> redis_stack_notifications
     api_notifications -down-> queue_notifications: "Отправка уведомления"
     api_notifications -down-> scheduler_notifications: "Настройка уведомлений по расписанию"
@@ -106,12 +104,9 @@ frame NetflixNotifications {
 }
 
 frame NetflixVoiceAssistant {
-    cloud "Traefik" as traefik_voice_assistant
     component "API" as api_voice_assistant
-    database "Redis" as redis_voice_assistant
 
-    api_voice_assistant <-up-> traefik_voice_assistant
-    api_voice_assistant <-down-> redis_voice_assistant: "Кэширование"
+    api_voice_assistant <--up-> base_traefik: "Обработка запроса\n от провайдера"
 }
 
 component NetflixMoviesClient
@@ -125,10 +120,7 @@ yandex_provider_voice_assistant <-down-> NetflixVoiceAssistant: "Голосов�
 NetflixMoviesAPI <-up-> NetflixMoviesClient
 
 base_client <-down-> nginx_admin: "Управление фильмами, актерами и жанрами"
-base_client <-down-> traefik_movies: "Основное АПИ онлайн-кинотеатра"
-base_client <-down-> traefik_auth: "Работа с пользователями и управление ролями"
-base_client <-down-> traefik_ugc: "Работа с пользовательским контентом"
-base_client <-down-> traefik_notifications: "Работа с уведомлениями"
+base_client <-down-> base_traefik: "Основное АПИ онлайн-кинотеатра"
 
 NetflixMoviesClient <-down-> NetflixVoiceAssistant
 @enduml
