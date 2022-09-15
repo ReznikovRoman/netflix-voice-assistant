@@ -8,7 +8,7 @@ class AliceService(AssistantService):
     def process_request(self, request: AliceRequest, /) -> AliceResponse:
         answer = "Hi! I`m bot"
         response = self._build_response(
-            meta=AliceRequest.meta, session=AliceRequest.session, version=AliceRequest.version,
+            meta=request.meta, session=request.session, version=request.version,
             response={
                 "text": answer,
                 "end_session": False,
