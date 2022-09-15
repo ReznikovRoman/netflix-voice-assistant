@@ -1,5 +1,7 @@
 import enum
 
+from pydantic import Field
+
 from voice_assistant.common.schemas import BaseOrjsonSchema
 
 from ..types import AssistantRequest, AssistantResponse
@@ -20,8 +22,9 @@ class IntentChoice(str, enum.Enum):
 class NluField(BaseOrjsonSchema):
     """Поле `nlu` в запросе от Яндекс.Диалогов."""
 
-    tokens: list
-    intents: dict[IntentChoice, dict] | None = None
+    tokens: list | None = Field(default_factory=list)
+    entities: list | None = Field(default_factory=list)
+    intents: dict[IntentChoice, dict] = Field(default_factory=dict)
 
 
 class RequestField(BaseOrjsonSchema):
@@ -29,7 +32,7 @@ class RequestField(BaseOrjsonSchema):
 
     command: str
     original_utterance: str
-    nlu: NluField
+    nlu: NluField | None = Field(default_factory=dict)
 
 
 class AliceRequest(AssistantRequest):
