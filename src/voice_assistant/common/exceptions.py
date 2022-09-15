@@ -40,7 +40,7 @@ class NotFoundError(NetflixVoiceAssistantError):
 
     message = "Resource not found"
     code = "not_found"
-    status_code: int = HTTPStatus.NOT_FOUND
+    status_code = HTTPStatus.NOT_FOUND
 
 
 class ConflictError(NetflixVoiceAssistantError):
@@ -48,7 +48,7 @@ class ConflictError(NetflixVoiceAssistantError):
 
     message = "Resource cannot be processed"
     code = "resource_conflict"
-    status_code: int = HTTPStatus.CONFLICT
+    status_code = HTTPStatus.CONFLICT
 
 
 class ImproperlyConfiguredError(NetflixVoiceAssistantError):
@@ -56,7 +56,7 @@ class ImproperlyConfiguredError(NetflixVoiceAssistantError):
 
     message = "Improperly configured service"
     code = "improperly_configured"
-    status_code: int = HTTPStatus.INTERNAL_SERVER_ERROR
+    status_code = HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 class AuthorizationError(NetflixVoiceAssistantError):
@@ -72,4 +72,4 @@ class RequiredHeaderMissingError(NetflixVoiceAssistantError):
 
     message = "Required header is missing"
     code = "missing_header"
-    status_code: int = HTTPStatus.BAD_REQUEST
+    status_code = HTTPStatus.BAD_REQUEST
