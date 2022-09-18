@@ -2,7 +2,7 @@ from dependency_injector.providers import Factory
 
 from .enums import AssistantProviderSlug
 from .exceptions import UnknownAssistantProvider
-from .schemas import AssistantResponse
+from .schemas import AssistantRequest, AssistantResponse, IntentChoice
 from .services import AssistantService, get_assistant_service
 
 
@@ -22,3 +22,25 @@ class AssistantProviderDispatcher:
             case _:
                 raise UnknownAssistantProvider()
         return response
+
+
+class IntentDispatcher:
+    def dispatcher_intent(self, assistant_request: AssistantRequest) -> AssistantResponse:
+        """Выбор нужного обработчика, по интенту."""
+        # TODO добавить работу с репозиторием
+        match assistant_request.intent:
+            case IntentChoice.FILM_ACTORS:
+                response = AssistantResponse(text="Tom")
+                return response  # TODO значение которое нужно пользователю
+            case IntentChoice.FILM_DESCRIPTION:
+                response = AssistantResponse(text=f"{assistant_request.search_value} очень интересный фильм")
+                return response  # TODO значение которое нужно пользователю
+            case IntentChoice.FILM_DIRECTORS:
+                response = AssistantResponse(text="")
+                return response  # TODO значение которое нужно пользователю
+            case IntentChoice.FILM_DURATION:
+                response = AssistantResponse(text=f"{assistant_request.search_value} длится больше часа")
+                return response  # TODO значение которое нужно пользователю
+            case _:
+                response = AssistantResponse(text="не знаю что ответить")
+                return response  # TODO значение которое нужно пользователю
