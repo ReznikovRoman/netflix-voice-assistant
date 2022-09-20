@@ -1,4 +1,5 @@
 from .. import IntentDispatcher
+from ..messages import Message
 from ..schemas import AssistantRequest
 from ..services import AssistantService
 from .schemas import AliceRequest, AliceResponse
@@ -11,7 +12,17 @@ class AliceService(AssistantService):
         self.intent_service = intent_service
 
     def process_request(self, request: AliceRequest, /) -> AliceResponse:
-
+        """Процесс обработки запросов от Алисы."""
+        # первичный запрос (всегда приветственный/ознакомительный)
+        if not request.request.command:
+            return self._build_response(
+                version=request.version,
+                response={
+                    "text": Message.WELCOME_MESSAGE,
+                    "end_session": False,
+                },
+                session_state=None,
+            )
         intent = None
         value = None
         # если есть поисковый запрос
@@ -44,7 +55,7 @@ class AliceService(AssistantService):
         return AliceRequest(**data)
 
     @staticmethod
-    def _build_response(*, version: str, response: dict, session_state) -> AliceResponse:
+    def _build_response(*, version: str, response: dict, session_state: AssistantRequest | None) -> AliceResponse:
         """Построение ответа для Яндекс.Диалогов."""
         alice_response_model = AliceResponse(
             version=version,
