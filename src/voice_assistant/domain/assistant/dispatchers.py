@@ -1,7 +1,10 @@
+from random import choice
+
 from dependency_injector.providers import Factory
 
 from .enums import AssistantProviderSlug
 from .exceptions import UnknownAssistantProvider
+from .messages import Message
 from .schemas import AssistantRequest, AssistantResponse, IntentChoice
 from .services import AssistantService, get_assistant_service
 
@@ -30,17 +33,49 @@ class IntentDispatcher:
         # TODO добавить работу с репозиторием
         match assistant_request.intent:
             case IntentChoice.FILM_ACTORS:
-                response = AssistantResponse(text="Tom")
-                return response  # TODO значение которое нужно пользователю
+                response = AssistantResponse(
+                    text=choice(
+                        Message.ACTORS_IN_FILM_MESSAGE_LIST).format(assistant_request.search_value, "Brad Pit",
+                                                                    ),
+                )
+                return response
+
             case IntentChoice.FILM_DESCRIPTION:
-                response = AssistantResponse(text=f"{assistant_request.search_value} очень интересный фильм")
-                return response  # TODO значение которое нужно пользователю
+                response = AssistantResponse(
+                    text=choice(
+                        Message.FIND_FILM_MESSAGE_LIST).format(assistant_request.search_value, "description",
+                                                               ),
+                )
+                return response
+
             case IntentChoice.FILM_DIRECTORS:
-                response = AssistantResponse(text="")
-                return response  # TODO значение которое нужно пользователю
+                response = AssistantResponse(
+                    text=choice(
+                        Message.FILM_DIRECTOR_MESSAGE_LIST).format(assistant_request.search_value, "Torantino",
+                                                                   ),
+                )
+                return response
+
+            case IntentChoice.SEARCH_BY_DIRECTOR:
+                response = AssistantResponse(
+                    text=choice(
+                        Message.FIND_BY_DIRECTOR_MESSAGE_LIST).format(assistant_request.search_value, "tor, Мстители",
+                                                                      ),
+                )
+                return response
+
             case IntentChoice.FILM_DURATION:
-                response = AssistantResponse(text=f"{assistant_request.search_value} длится больше часа")
-                return response  # TODO значение которое нужно пользователю
+                response = AssistantResponse(
+                    text=choice(
+                        Message.FILM_DURATION_MESSAGE_LIST).format(assistant_request.search_value, "01:30",
+                                                                   ),
+                )
+                return response
+
             case _:
-                response = AssistantResponse(text="не знаю что ответить")
-                return response  # TODO значение которое нужно пользователю
+                response = AssistantResponse(
+                    text=choice(
+                        Message.FIND_FILM_MESSAGE_LIST).format(assistant_request.search_value, "description",
+                                                               ),
+                )
+                return response
