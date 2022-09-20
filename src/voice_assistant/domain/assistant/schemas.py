@@ -12,6 +12,7 @@ class IntentChoice(str, enum.Enum):
     FILM_ACTORS = "actors_in_the_film"
     FILM_DIRECTORS = "film_director"
     FILM_DURATION = "movie_duration"
+    SEARCH_BY_DIRECTOR = "search_by_director"
 
 
 class AssistantRequest(BaseOrjsonSchema):
