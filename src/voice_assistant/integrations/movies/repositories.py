@@ -9,4 +9,4 @@ class MovieRepository:
         self._movie_client = movie_client
 
     async def find_movie_by_name(self, name: str, /):
-        return await self._movie_client.find_movie_by_name(name)
+        return await self._movie_client.search_films(name)

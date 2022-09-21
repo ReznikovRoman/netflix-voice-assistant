@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     DEBUG: bool = Field(False)
     PROJECT_BASE_URL: str
 
+    # Configuration
+    USE_STUBS: bool = Field(False)
+
     class Config(EnvConfig):
         env_prefix = "NVA_"
         case_sensitive = True
