@@ -31,7 +31,7 @@ class AliceRequest(AssistantRequest):
     request: RequestField
     session: dict
     version: str
-    state: dict | None = Field(default_factory=None)
+    state: dict | None = Field(default_factory=dict)
 
 
 class AliceResponse(AssistantResponse):

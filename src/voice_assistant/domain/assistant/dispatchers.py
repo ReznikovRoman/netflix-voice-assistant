@@ -2,9 +2,8 @@ from random import choice
 
 from dependency_injector.providers import Factory
 
-from .enums import AssistantProviderSlug
+from .enums import AssistantProviderSlug, Message
 from .exceptions import UnknownAssistantProvider
-from .messages import Message
 from .schemas import AssistantRequest, AssistantResponse, IntentChoice
 from .services import AssistantService, get_assistant_service
 
@@ -28,54 +27,52 @@ class AssistantProviderDispatcher:
 
 
 class IntentDispatcher:
+    """Диспатчер интентов."""
+
     def dispatcher_intent(self, assistant_request: AssistantRequest) -> AssistantResponse:
-        """Выбор нужного обработчика, по интенту."""
+        """Выбор нужного обработчика по интенту."""
         # TODO добавить работу с репозиторием
         match assistant_request.intent:
             case IntentChoice.FILM_ACTORS:
                 response = AssistantResponse(
                     text=choice(
-                        Message.ACTORS_IN_FILM_MESSAGE_LIST).format(assistant_request.search_value, "Brad Pit",
-                                                                    ),
+                        Message.ACTORS_IN_FILM_MESSAGE_LIST.value).format(assistant_request.search_value, "Brad Pit",
+                                                                          ),
                 )
-                return response
 
             case IntentChoice.FILM_DESCRIPTION:
                 response = AssistantResponse(
                     text=choice(
-                        Message.FIND_FILM_MESSAGE_LIST).format(assistant_request.search_value, "description",
-                                                               ),
+                        Message.FIND_FILM_MESSAGE_LIST.value).format(assistant_request.search_value, "description",
+                                                                     ),
                 )
-                return response
 
             case IntentChoice.FILM_DIRECTORS:
                 response = AssistantResponse(
                     text=choice(
-                        Message.FILM_DIRECTOR_MESSAGE_LIST).format(assistant_request.search_value, "Torantino",
-                                                                   ),
+                        Message.FILM_DIRECTOR_MESSAGE_LIST.value).format(assistant_request.search_value, "Torantino",
+                                                                         ),
                 )
-                return response
 
             case IntentChoice.SEARCH_BY_DIRECTOR:
                 response = AssistantResponse(
                     text=choice(
-                        Message.FIND_BY_DIRECTOR_MESSAGE_LIST).format(assistant_request.search_value, "tor, Мстители",
-                                                                      ),
+                        Message.FIND_BY_DIRECTOR_MESSAGE_LIST.value).format(assistant_request.search_value,
+                                                                            "tor, Мстители",
+                                                                            ),
                 )
-                return response
 
             case IntentChoice.FILM_DURATION:
                 response = AssistantResponse(
                     text=choice(
-                        Message.FILM_DURATION_MESSAGE_LIST).format(assistant_request.search_value, "01:30",
-                                                                   ),
+                        Message.FILM_DURATION_MESSAGE_LIST.value).format(assistant_request.search_value, "01:30",
+                                                                         ),
                 )
-                return response
 
             case _:
                 response = AssistantResponse(
                     text=choice(
-                        Message.FIND_FILM_MESSAGE_LIST).format(assistant_request.search_value, "description",
-                                                               ),
+                        Message.FIND_FILM_MESSAGE_LIST.value).format(assistant_request.search_value, "description",
+                                                                     ),
                 )
-                return response
+        return response
