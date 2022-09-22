@@ -18,7 +18,7 @@ class AliceService(AssistantService):
             return self._build_response(
                 version=request.version,
                 response={
-                    "text": Message.WELCOME_MESSAGE.value,
+                    "text": Message.WELCOME_MESSAGE.value[0],
                     "end_session": False,
                 },
                 request_state=None,

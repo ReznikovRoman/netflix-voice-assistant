@@ -39,4 +39,4 @@ class AliceResponse(AssistantResponse):
 
     response: dict
     version: str
-    session_state: dict | None = Field(default_factory=None)
+    session_state: dict | None = None
