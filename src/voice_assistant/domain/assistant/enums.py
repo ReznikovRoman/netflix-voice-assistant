@@ -13,7 +13,7 @@ class IntentChoice(str, enum.Enum):
     FILM_DESCRIPTION = "film_description"
     FILM_ACTORS = "actors_in_the_film"
     FILM_DIRECTORS = "film_director"
-    FILM_DURATION = "movie_duration"
+    FILM_RATING = "film_rating"
     SEARCH_BY_DIRECTOR = "search_by_director"
 
 
@@ -40,10 +40,10 @@ class Message(list, enum.Enum):
         "{} режиссировал в {}",
     ]
 
-    FILM_DURATION_MESSAGE_LIST = [
-        "Фильм {} длится {}",
-        "Длительность фильма {} составляет {}",
-        "По моей информации фильм {} длится {}",
+    FILM_RATING_MESSAGE_LIST = [
+        "Рейтинг фильма {} {}",
+        "Пользователи оценили фильм {} на {}",
+        "По моей информации рейтинг фильма {} составляет {}",
     ]
 
     FILM_DIRECTOR_MESSAGE_LIST = [
@@ -57,7 +57,7 @@ class Message(list, enum.Enum):
         "В картине {} снимались: {}",
     ]
 
-    FIND_FILM_MESSAGE_LIST = [
+    FILM_DESCRIPTION_MESSAGE_LIST = [
         "Рассказываю о фильме {} {}",
         "Вот что я могу рассказать о фильме {} {}",
         "Описание фильма {} {}",

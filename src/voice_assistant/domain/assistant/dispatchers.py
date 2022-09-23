@@ -2,6 +2,7 @@ from random import choice
 
 from dependency_injector.providers import Factory
 
+from ...integrations.movies import MovieRepository
 from .enums import AssistantProviderSlug, Message
 from .exceptions import UnknownAssistantProvider
 from .schemas import AssistantRequest, AssistantResponse, IntentChoice
@@ -29,50 +30,69 @@ class AssistantProviderDispatcher:
 class IntentDispatcher:
     """Диспатчер интентов."""
 
-    def dispatcher_intent(self, assistant_request: AssistantRequest) -> AssistantResponse:
+    def __init__(self, movie_repository: MovieRepository) -> None:
+        self.movie_repository = movie_repository
+
+    async def dispatcher_intent(self, assistant_request: AssistantRequest) -> AssistantResponse:
         """Выбор нужного обработчика по интенту."""
-        # TODO добавить работу с репозиторием
+
+        async def get_film_description(search_value: str):
+            film_id = await self.movie_repository.find_movie_by_name(search_value)
+            film = await self.movie_repository.find_movie_by_id(film_id)
+            return AssistantResponse(
+                text=choice(Message.FILM_DESCRIPTION_MESSAGE_LIST.value).format(search_value, film),
+            )
+
+        async def get_actors_in_film(search_value: str):
+            film_id = await self.movie_repository.find_movie_by_name(search_value)
+            film = await self.movie_repository.find_movie_by_id(film_id)
+            return AssistantResponse(
+                text=choice(Message.ACTORS_IN_FILM_MESSAGE_LIST.value).format(search_value, film),
+            )
+
+        async def film_director(search_value: str):
+            film_id = await self.movie_repository.find_movie_by_name(search_value)
+            film = await self.movie_repository.find_movie_by_id(film_id)
+            return AssistantResponse(
+                text=choice(Message.FILM_DIRECTOR_MESSAGE_LIST.value).format(search_value, film.directors),
+            )
+
+        async def get_film_rating(search_value: str):
+            film_by_name = await self.movie_repository.find_movie_by_name(search_value)
+            film = await self.movie_repository.find_movie_by_id(film_by_name.film_id)
+            return AssistantResponse(
+                text=choice(Message.FILM_RATING_MESSAGE_LIST.value).format(search_value, film.imdb_rating),
+            )
+
+        async def search_by_director(search_value: str):
+            film_id = await self.movie_repository.find_movie_by_name(search_value)
+            film = await self.movie_repository.find_movie_by_id(film_id)
+            return AssistantResponse(
+                text=choice(Message.FIND_BY_DIRECTOR_MESSAGE_LIST.value).format(search_value, film),
+            )
+
+        async def not_recognized():
+            # TODO доделать ответы
+            response = "не понял"
+            return response
+
         match assistant_request.intent:
             case IntentChoice.FILM_ACTORS:
-                response = AssistantResponse(
-                    text=choice(
-                        Message.ACTORS_IN_FILM_MESSAGE_LIST.value).format(assistant_request.search_value, "Brad Pit",
-                                                                          ),
-                )
+                response = await get_actors_in_film(assistant_request.search_value)
 
             case IntentChoice.FILM_DESCRIPTION:
-                response = AssistantResponse(
-                    text=choice(
-                        Message.FIND_FILM_MESSAGE_LIST.value).format(assistant_request.search_value, "description",
-                                                                     ),
-                )
+                response = await get_film_description(assistant_request.search_value)
 
             case IntentChoice.FILM_DIRECTORS:
-                response = AssistantResponse(
-                    text=choice(
-                        Message.FILM_DIRECTOR_MESSAGE_LIST.value).format(assistant_request.search_value, "Torantino",
-                                                                         ),
-                )
+                response = await film_director(assistant_request.search_value)
 
             case IntentChoice.SEARCH_BY_DIRECTOR:
-                response = AssistantResponse(
-                    text=choice(
-                        Message.FIND_BY_DIRECTOR_MESSAGE_LIST.value).format(assistant_request.search_value,
-                                                                            "tor, Мстители",
-                                                                            ),
-                )
+                response = await search_by_director(assistant_request.search_value)
 
-            case IntentChoice.FILM_DURATION:
-                response = AssistantResponse(
-                    text=choice(
-                        Message.FILM_DURATION_MESSAGE_LIST.value).format(assistant_request.search_value, "01:30",
-                                                                         ),
-                )
+            case IntentChoice.FILM_RATING:
+                response = await get_film_rating(assistant_request.search_value)
 
             case _:
-                response = AssistantResponse(
-                    text=choice(
-                        Message.FIND_FILM_MESSAGE_LIST.value).format(assistant_request.search_value, "description",
-                                                                     ),
-                )
+                response = await not_recognized()
+
         return response
