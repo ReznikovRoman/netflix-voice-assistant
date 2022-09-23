@@ -21,7 +21,7 @@ class AssistantResponse(BaseOrjsonSchema):
 
 class FilmByName(BaseModel):
     title: str
-    film_id: uuid
+    film_id: uuid.UUID
 
 
 class FilmDetail(BaseModel):

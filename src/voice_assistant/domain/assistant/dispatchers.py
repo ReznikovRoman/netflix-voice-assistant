@@ -18,7 +18,7 @@ class AssistantProviderDispatcher:
     async def dispatch_provider(self, provider: AssistantProviderSlug, /, *, data: dict) -> AssistantResponse:
         """Выбор корректного сервиса для данного провайдера голосового ассистента."""
         assistant_service = get_assistant_service(self._assistant_service_factory, provider=provider.value)
-        provider_request = assistant_service.build_request_from_provider_data(data)
+        provider_request = await assistant_service.build_request_from_provider_data(data)
         match provider:
             case AssistantProviderSlug.YANDEX_ALICE:
                 response = assistant_service.process_request(provider_request)
@@ -73,8 +73,10 @@ class IntentDispatcher:
 
         async def not_recognized():
             # TODO доделать ответы
-            response = "не понял"
-            return response
+
+            return AssistantResponse(
+                text="не понял",
+            )
 
         match assistant_request.intent:
             case IntentChoice.FILM_ACTORS:

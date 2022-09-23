@@ -15,7 +15,7 @@ class AssistantService(abc.ABC):
         """Обработка запроса пользователя."""
 
     @abc.abstractmethod
-    def build_request_from_provider_data(self, data: dict, /) -> AssistantRequest:
+    async def build_request_from_provider_data(self, data: dict, /) -> AssistantRequest:
         """Преобразование данных от провайдера в доменный объект."""
 
 

@@ -11,11 +11,11 @@ class AliceService(AssistantService):
     def __init__(self, intent_service: IntentDispatcher) -> None:
         self.intent_service = intent_service
 
-    def process_request(self, request: AliceRequest, /) -> AliceResponse:
+    async def process_request(self, request: AliceRequest, /) -> AliceResponse:
         """Процесс обработки запросов от Алисы."""
         # первичный запрос (всегда приветственный/ознакомительный)
         if not request.request.command:
-            return self._build_response(
+            return await self._build_response(
                 version=request.version,
                 response={
                     "text": Message.WELCOME_MESSAGE.value[0],
@@ -40,9 +40,9 @@ class AliceService(AssistantService):
             intent=intent,
             search_value=value,
         )
-        assistant_response = self.intent_service.dispatcher_intent(assistant_request)
+        assistant_response = await self.intent_service.dispatcher_intent(assistant_request)
 
-        return self._build_response(
+        return await self._build_response(
             version=request.version,
             response={
                 "text": assistant_response.text,
@@ -51,11 +51,11 @@ class AliceService(AssistantService):
             request_state=assistant_request,
         )
 
-    def build_request_from_provider_data(self, data: dict, /) -> AliceRequest:
+    async def build_request_from_provider_data(self, data: dict, /) -> AliceRequest:
         return AliceRequest(**data)
 
     @staticmethod
-    def _build_response(*, version: str, response: dict, request_state: AssistantRequest | None) -> AliceResponse:
+    async def _build_response(*, version: str, response: dict, request_state: AssistantRequest | None) -> AliceResponse:
         """Построение ответа для Яндекс.Диалогов."""
         alice_response_model = AliceResponse(
             version=version,
