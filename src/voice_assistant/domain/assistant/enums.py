@@ -15,29 +15,29 @@ class IntentChoice(str, enum.Enum):
     FILM_DIRECTORS = "film_director"
     FILM_RATING = "film_rating"
     SEARCH_BY_DIRECTOR = "search_by_director"
-    NOT_RECOGNIZED = "not_recognized"
+    NOT_RECOGNIZED = "intent_not_recognized"
+    HELP = "help"
 
 
 class Message(enum.Enum):
     """Шаблоны ответов ассистента."""
 
-    ON_ERROR_MESSAGE = "Что-то пошло не так, попробуйте ещё раз."
-    WELCOME_MESSAGE = "я могу подсказать: описание фильмов, назвать режиссера фильма"
-
-    FALLBACK_MESSAGE = "Извините, я вас не поняла. Пожалуйста, переформулируйте запрос."
-    ON_WELCOME_HELP_MESSAGE = "Что бы узнать описание навыка - используйте команду - Что ты умеешь?"
-    ON_FILM_HELP_MESSAGE = """
-    Что бы получить описание фильма - используйте команду - "расскажи о фильме..".
-    Что бы выйти - используйте команду - Хватит.
+    WELCOME_HELP_MESSAGE = """Привет! Я голосовой ассистент NETFLIX-VOICE-ASSISTANT, что бы узнать мои возможности
+                              скажите  Что ты умеешь?"""
+    ERROR_MESSAGE = "Что-то пошло не так, попробуйте ещё раз."
+    INTENT_NOT_FOUND = "Я не понимаю, что вы хотите узнать... пожалуйста переформулируйте вопрос"
+    NOT_FOUND_MESSAGE_TEMPLATE = "По запросу {search_query} - ничего не найдено, повторите вопрос."
+    HELP = """
+    Скажите кто снимался в фильме..., что бы узнать актеров из фильма,
+    расскажи про фильм..., для получения описания фильма,
+    кто режиссер фильма..., что бы узнать режиссера,
+    какой рейтинг у фильма..., что бы узнать рейтинг,
+    найди фильм режиссера..., что бы получить фильмы определенного режиссера
     """
-    WHAT_CAN_YOU_DO_MESSAGE = "Мой навык в том, что бы искать фильмы и предоставлять информацию о них."
-    FIELD_INFO_IS_NOT_EXISTS_MESSAGE = "К сожалению информация по этому полю отсутствует"
-    NOT_FOUND_MESSAGE_TEMPLATE = "По запросу {search_query} - ничего не найдено, переформулируйте запрос."
-
     # Ответы на интенты
     FIND_BY_DIRECTOR_MESSAGE_LIST = [
-        "Режиссер {director} участвовал в {film}",
-        "{director} режиссировал в {film}",
+        "Режиссер {director} участвовал в {films}",
+        "{director} режиссировал в {films}",
     ]
 
     FILM_RATING_MESSAGE_LIST = [

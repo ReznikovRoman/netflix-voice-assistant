@@ -1,5 +1,5 @@
 from .. import IntentDispatcher
-from ..enums import Message
+from ..enums import IntentChoice, Message
 from ..schemas import AssistantRequest
 from ..services import AssistantService
 from .schemas import AliceRequest, AliceResponse
@@ -18,12 +18,12 @@ class AliceService(AssistantService):
             return await self._build_response(
                 version=request.version,
                 response={
-                    "text": Message.WELCOME_MESSAGE.value[0],
+                    "text": Message.WELCOME_HELP_MESSAGE.value,
                     "end_session": False,
                 },
                 assistant_request=None,
             )
-        intent = None
+        intent = IntentChoice.NOT_RECOGNIZED.value
         search_query = request.state.get("session").get("search_value")
         # если есть поисковый запрос
         if request.request.nlu.intents:

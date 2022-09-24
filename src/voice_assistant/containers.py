@@ -37,7 +37,10 @@ class Container(containers.DeclarativeContainer):
     # Infrastructure
 
     # Domain -> Assistant
-    intent_dispatcher_service = providers.Singleton(assistant.IntentDispatcher)
+    intent_dispatcher_service = providers.Singleton(
+        assistant.IntentDispatcher,
+        movie_repository=movie_repository,
+    )
 
     alice_service = providers.Factory(
         alice.AliceService,

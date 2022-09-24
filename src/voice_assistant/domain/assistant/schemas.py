@@ -33,3 +33,16 @@ class FilmFullDetail(FilmShortDetail):
     description: str
     actors: str
     directors: str
+
+
+class PersonShortDetail(BaseModel):
+    """Список персон."""
+
+    full_name: str
+    person_id: uuid.UUID
+
+
+class FilmList(BaseModel):
+    """Список фильмов в формате строки."""
+
+    films: str
