@@ -9,7 +9,7 @@ from voice_assistant.domain.assistant.enums import IntentChoice
 class AssistantRequest(BaseOrjsonSchema):
     """Базовый класс запроса от провайдера."""
 
-    intent: IntentChoice | None = None
+    intent: IntentChoice = IntentChoice.NOT_RECOGNIZED
     search_value: str | None = None
 
 
@@ -19,14 +19,17 @@ class AssistantResponse(BaseOrjsonSchema):
     text: str
 
 
-class FilmByName(BaseModel):
+class FilmShortDetail(BaseModel):
+    """Сокращенная модель для запроса фильма (по имени)."""
+
     title: str
     film_id: uuid.UUID
-
-
-class FilmDetail(BaseModel):
-    title: str
     imdb_rating: float | None
+
+
+class FilmFullDetail(FilmShortDetail):
+    """Модель для запроса полной информации о фильме (по id)."""
+
     description: str
     actors: str
     directors: str

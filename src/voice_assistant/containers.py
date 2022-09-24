@@ -41,7 +41,8 @@ class Container(containers.DeclarativeContainer):
 
     alice_service = providers.Factory(
         alice.AliceService,
-        intent_service=intent_dispatcher_service)
+        intent_dispatcher=intent_dispatcher_service,
+    )
 
     assistant_dispatcher = providers.Singleton(
         assistant.AssistantProviderDispatcher,
