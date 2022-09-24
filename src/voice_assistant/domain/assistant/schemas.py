@@ -10,13 +10,13 @@ class AssistantRequest(BaseOrjsonSchema):
     """Базовый класс запроса от провайдера."""
 
     intent: IntentChoice = IntentChoice.NOT_RECOGNIZED
-    search_value: str | None = None
+    search_query: str | None
 
 
 class AssistantResponse(BaseOrjsonSchema):
     """Базовый класс ответа для провайдера."""
 
-    text: str
+    text: str | None
 
 
 class FilmShortDetail(BaseModel):

@@ -11,7 +11,7 @@ class AssistantService(abc.ABC):
     """Базовый сервис голосового ассистента."""
 
     @abc.abstractmethod
-    def process_request(self, request: AssistantRequest, /) -> AssistantResponse:
+    async def process_request(self, request: AssistantRequest, /) -> AssistantResponse:
         """Обработка запроса пользователя."""
 
     @abc.abstractmethod

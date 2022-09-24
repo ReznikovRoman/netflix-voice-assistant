@@ -24,7 +24,7 @@ class AliceService(AssistantService):
                 assistant_request=None,
             )
         intent = IntentChoice.NOT_RECOGNIZED.value
-        search_query = request.state.get("session").get("search_value")
+        search_query = request.state.get("session").get("search_query")
         # если есть поисковый запрос
         if request.request.nlu.intents:
             intent = list(request.request.nlu.intents.keys())[0].value  # TODO Как то кривовато вышло
