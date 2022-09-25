@@ -19,7 +19,7 @@ class MovieRepository:
         films = await self._movie_client.search_films(name, options=self._create_query_options(page_size=1))
         try:
             film = films[0]
-        except IndexError:
+        except TypeError:
             return None
         return FilmShortDetail(film_id=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
 
@@ -40,7 +40,7 @@ class MovieRepository:
         persons = await self._movie_client.search_persons(person_name, options=self._create_query_options(page_size=1))
         try:
             person = persons[0]
-        except IndexError:
+        except TypeError:
             return None
         return PersonShortDetail(
             person_id=person.uuid,
@@ -54,5 +54,6 @@ class MovieRepository:
 
     @staticmethod
     def _create_query_options(*, page_size: int) -> QueryOptions:
+        """Создание настроек для запроса."""
         pagination_options = PageNumberPaginationOptions(page_size=page_size)
         return QueryOptions(page_number_pagination=pagination_options)

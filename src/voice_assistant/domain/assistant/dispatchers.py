@@ -48,6 +48,8 @@ class IntentDispatcher:
                 response = await self.search_by_director(assistant_request.search_query)
             case IntentChoice.FILM_RATING:
                 response = await self.get_film_rating(assistant_request.search_query)
+            case IntentChoice.MISSING_SEARCH_QUERY:
+                response = AssistantResponse(text=DefaultResponseMessage.MISSING_SEARCH_QUERY)
             case IntentChoice.NOT_RECOGNIZED:
                 response = AssistantResponse(text=DefaultResponseMessage.INTENT_NOT_FOUND)
             case IntentChoice.HELP:
@@ -57,6 +59,7 @@ class IntentDispatcher:
         return response
 
     async def get_film_description(self, search_query: str, /) -> AssistantResponse:
+        """Получение описания фильма."""
         try:
             film_detail = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
@@ -69,6 +72,7 @@ class IntentDispatcher:
         )
 
     async def get_film_actors(self, search_query: str, /) -> AssistantResponse:
+        """Получение актеров в фильме."""
         try:
             film_detail = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
@@ -81,6 +85,7 @@ class IntentDispatcher:
         )
 
     async def get_film_directors(self, search_query: str, /) -> AssistantResponse:
+        """Получение фильма по режиссеру."""
         try:
             film_detail = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
@@ -93,6 +98,7 @@ class IntentDispatcher:
         )
 
     async def get_film_rating(self, search_query: str, /) -> AssistantResponse:
+        """Получение рейтинга фильма."""
         film = await self._movie_repository.find_movie_by_name(search_query)
         if film is None:
             return await self._get_not_found_response(search_query=search_query)
@@ -104,6 +110,7 @@ class IntentDispatcher:
         )
 
     async def search_by_director(self, search_query: str, /) -> AssistantResponse:
+        """Поиск по режиссеру."""
         person = await self._movie_repository.find_person_by_name(search_query)
         if person is None:
             return await self._get_not_found_response(search_query=search_query)
@@ -116,6 +123,7 @@ class IntentDispatcher:
         )
 
     async def _get_film_by_name(self, name: str, /) -> FilmFullDetail:
+        """Получение фильма по имени."""
         film_short_detail = await self._movie_repository.find_movie_by_name(name)
         if film_short_detail is None:
             raise FilmNotFoundError
@@ -123,5 +131,6 @@ class IntentDispatcher:
 
     @staticmethod
     async def _get_not_found_response(*, search_query: str) -> AssistantResponse:
+        """Формирование ответа о том что данные не найдены."""
         return AssistantResponse(
             text=DefaultResponseMessage.NOT_FOUND_MESSAGE_TEMPLATE.format(search_query=search_query))

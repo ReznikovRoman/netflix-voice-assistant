@@ -58,4 +58,6 @@ class AliceService(AssistantService):
                 .get("slots", {})
                 .get("search_query", {}).get("value", alice_request.state.get("session").get("search_query"))
             )
+            if search_query is None:
+                intent = IntentChoice.MISSING_SEARCH_QUERY
         return AssistantRequest(intent=intent, search_query=search_query)
