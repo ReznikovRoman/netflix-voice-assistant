@@ -1,22 +1,8 @@
-import enum
-
-from pydantic import Field
+from pydantic import Field, validator
 
 from voice_assistant.common.schemas import BaseOrjsonSchema
 
-from ..schemas import AssistantRequest, AssistantResponse
-
-# TODO: добавить аннотации TypedDict для сущностей Яндекс.Диалогов
-#  - meta, session, version, response
-
-
-class IntentChoice(str, enum.Enum):
-    """Список намерений в Яндекс.Диалогах."""
-
-    FIND_FILM = "find_film"
-    FILM_ACTORS = "actors_in_the_film"
-    FILM_DIRECTORS = "film_director"
-    FILM_DURATION = "movie_duration"
+from ..schemas import AssistantRequest, AssistantResponse, IntentChoice
 
 
 class NluField(BaseOrjsonSchema):
@@ -25,6 +11,16 @@ class NluField(BaseOrjsonSchema):
     tokens: list | None = Field(default_factory=list)
     entities: list | None = Field(default_factory=list)
     intents: dict[IntentChoice, dict] = Field(default_factory=dict)
+
+    @validator("intents", pre=True)
+    def remove_redundant_intents(cls, value: dict[str, dict]) -> dict[IntentChoice, dict]:
+        """Убирает лишние интенты из запроса от Яндекс.Диалогов."""
+        for key in list(value.keys()):
+            try:
+                _ = IntentChoice(key)
+            except ValueError:
+                del value[key]
+        return value
 
 
 class RequestField(BaseOrjsonSchema):
@@ -42,12 +38,12 @@ class AliceRequest(AssistantRequest):
     request: RequestField
     session: dict
     version: str
+    state: dict | None = Field(default_factory=dict)
 
 
 class AliceResponse(AssistantResponse):
     """Ответ для Яндекс.Диалогов."""
 
-    meta: dict
     response: dict
-    session: dict
     version: str
+    session_state: dict | None = Field(default_factory=dict)
