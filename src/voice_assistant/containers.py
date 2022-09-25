@@ -37,21 +37,21 @@ class Container(containers.DeclarativeContainer):
     # Infrastructure
 
     # Domain -> Assistant
-    intent_dispatcher_service = providers.Singleton(
+    intent_dispatcher = providers.Singleton(
         assistant.IntentDispatcher,
         movie_repository=movie_repository,
     )
 
     alice_service = providers.Factory(
         alice.AliceService,
-        intent_dispatcher=intent_dispatcher_service,
+        intent_dispatcher=intent_dispatcher,
     )
 
     assistant_dispatcher = providers.Singleton(
         assistant.AssistantProviderDispatcher,
         assistant_service_factory=providers.FactoryAggregate(
             provider_dict={
-                assistant.AssistantProviderSlug.YANDEX_ALICE.value: alice_service,
+                assistant.AssistantProviderSlug.YANDEX_ALICE: alice_service,
             },
         ),
     )

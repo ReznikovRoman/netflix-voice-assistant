@@ -10,36 +10,39 @@ class AssistantRequest(BaseOrjsonSchema):
     """Базовый класс запроса от провайдера."""
 
     intent: IntentChoice = IntentChoice.NOT_RECOGNIZED
-    search_query: str | None
+    search_query: str | None = None  # TODO: возможно можно сделать поле обязательным
 
 
 class AssistantResponse(BaseOrjsonSchema):
     """Базовый класс ответа для провайдера."""
 
-    text: str | None
+    text: str
 
 
 class FilmShortDetail(BaseModel):
-    """Сокращенная модель для запроса фильма (по имени)."""
+    """Короткая информация о фильме."""
 
-    title: str
     film_id: uuid.UUID
-    imdb_rating: float | None
+    title: str
+    imdb_rating: float | None = None
 
 
-class FilmFullDetail(FilmShortDetail):
-    """Модель для запроса полной информации о фильме (по id)."""
+class FilmFullDetail(BaseModel):
+    """Полная информация о фильме."""
 
+    film_id: uuid.UUID
+    title: str
+    imdb_rating: float | None = None
     description: str
     actors: str
     directors: str
 
 
 class PersonShortDetail(BaseModel):
-    """Список персон."""
+    """Короткая информация о персоне."""
 
-    full_name: str
     person_id: uuid.UUID
+    full_name: str
 
 
 class FilmList(BaseModel):

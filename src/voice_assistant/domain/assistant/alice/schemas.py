@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import Field, validator
 
 from voice_assistant.common.schemas import BaseOrjsonSchema
 
@@ -11,6 +11,16 @@ class NluField(BaseOrjsonSchema):
     tokens: list | None = Field(default_factory=list)
     entities: list | None = Field(default_factory=list)
     intents: dict[IntentChoice, dict] = Field(default_factory=dict)
+
+    @validator("intents", pre=True)
+    def remove_redundant_intents(cls, value: dict[str, dict]) -> dict[IntentChoice, dict]:
+        """Убирает лишние интенты из запроса от Яндекс.Диалогов."""
+        for key in list(value.keys()):
+            try:
+                _ = IntentChoice(key)
+            except ValueError:
+                del value[key]
+        return value
 
 
 class RequestField(BaseOrjsonSchema):
@@ -36,4 +46,4 @@ class AliceResponse(AssistantResponse):
 
     response: dict
     version: str
-    session_state: dict | None = None
+    session_state: dict | None = Field(default_factory=dict)

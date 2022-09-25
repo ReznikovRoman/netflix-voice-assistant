@@ -16,7 +16,7 @@ router = APIRouter(
 @router.post("/requests/process/{provider}", summary="Webhook для провайдера", status_code=HTTPStatus.OK)
 @inject
 async def process_user_request(
-    provider: AssistantProviderSlug = Path(title="Имя провайдера."),
+    provider: AssistantProviderSlug = Path(..., title="Название провайдера."),
     payload: dict = Body(..., description="Данные от провайдера"), *,
     provider_dispatcher: AssistantProviderDispatcher = Depends(Provide[Container.assistant_dispatcher]),
 ):

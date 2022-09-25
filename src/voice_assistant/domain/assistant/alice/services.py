@@ -1,5 +1,5 @@
-from .. import IntentDispatcher
-from ..enums import IntentChoice, Message
+from ..dispatchers import IntentDispatcher
+from ..enums import DefaultResponseMessage, IntentChoice
 from ..schemas import AssistantRequest
 from ..services import AssistantService
 from .schemas import AliceRequest, AliceResponse
@@ -9,58 +9,53 @@ class AliceService(AssistantService):
     """Голосовой ассистент на основе Алисы."""
 
     def __init__(self, intent_dispatcher: IntentDispatcher) -> None:
-        self.intent_dispatcher = intent_dispatcher
+        assert isinstance(intent_dispatcher, IntentDispatcher)
+        self._intent_dispatcher = intent_dispatcher
 
     async def process_request(self, request: AliceRequest, /) -> AliceResponse:
         """Процесс обработки запросов от Алисы."""
-        # первичный запрос (всегда приветственный/ознакомительный)
-        if not request.request.command:
-            return await self._build_response(
+        if not request.request.command:  # первичный запрос (всегда приветственный/ознакомительный)
+            response_text = DefaultResponseMessage.WELCOME_HELP_MESSAGE
+            return self._build_response(
+                text=response_text,
                 version=request.version,
                 response={
-                    "text": Message.WELCOME_HELP_MESSAGE.value,
+                    "text": response_text,
                     "end_session": False,
                 },
-                assistant_request=None,
+                session_state={},
             )
-        intent = IntentChoice.NOT_RECOGNIZED.value
-        search_query = request.state.get("session").get("search_query")
-        # если есть поисковый запрос
-        if request.request.nlu.intents:
-            intent = list(request.request.nlu.intents.keys())[0].value  # TODO Как то кривовато вышло
-            if request.request.nlu.intents.get(intent).get("slots"):
-                # если есть поисковое значение
-                search_query = request.request.nlu.intents.get(intent).get("slots").get("search_value").get("value")
-
-        assistant_request = AssistantRequest(
-            intent=intent,
-            search_query=search_query,
-        )
-        assistant_response = await self.intent_dispatcher.dispatch_intent(assistant_request)
-
-        return await self._build_response(
+        assistant_request = self._build_assistant_request_from_provider(request)
+        assistant_response = await self._intent_dispatcher.dispatch_intent_by_request(assistant_request)
+        response_text = assistant_response.text
+        return self._build_response(
+            text=response_text,
             version=request.version,
             response={
-                "text": assistant_response.text,
+                "text": response_text,
                 "end_session": False,
             },
-            assistant_request=assistant_request,
+            session_state=assistant_request.dict(),
         )
 
-    async def build_request_from_provider_data(self, data: dict, /) -> AliceRequest:
+    def build_request_from_provider_data(self, data: dict, /) -> AliceRequest:
         return AliceRequest(**data)
 
     @staticmethod
-    async def _build_response(
-        *,
-        assistant_request: AssistantRequest = None,
-        version: str,
-        response: dict,
-    ) -> AliceResponse:
+    def _build_response(*, text: str, version: str, response: dict, session_state: dict) -> AliceResponse:
         """Построение ответа для Яндекс.Диалогов."""
-        alice_response_model = AliceResponse(
-            version=version,
-            response=response,
-            session_state=assistant_request,
-        )
-        return alice_response_model
+        return AliceResponse(text=text, version=version, response=response, session_state=session_state)
+
+    @staticmethod
+    def _build_assistant_request_from_provider(alice_request: AliceRequest, /) -> AssistantRequest:
+        """Построение базового запроса на основе данных от провайдера."""
+        intent = IntentChoice.NOT_RECOGNIZED
+        search_query = alice_request.state.get("session").get("search_query")
+        if alice_request.request.nlu.intents:  # если есть поисковый запрос
+            intent = list(alice_request.request.nlu.intents.keys())[0]
+            search_query = (
+                alice_request.request.nlu.intents.get(intent, {})
+                .get("slots", {})
+                .get("search_query", {}).get("value", alice_request.state.get("session").get("search_query"))
+            )
+        return AssistantRequest(intent=intent, search_query=search_query)
