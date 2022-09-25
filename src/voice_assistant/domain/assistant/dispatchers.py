@@ -123,7 +123,7 @@ class IntentDispatcher:
             case IntentChoice.NOT_RECOGNIZED:
                 response = await self.not_recognized()
             case IntentChoice.HELP:
-                response = await self.not_recognized()
+                response = await self.help()
             case _:
                 response = await self.exception_answer()
 

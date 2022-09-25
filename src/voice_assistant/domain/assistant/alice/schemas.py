@@ -4,9 +4,6 @@ from voice_assistant.common.schemas import BaseOrjsonSchema
 
 from ..schemas import AssistantRequest, AssistantResponse, IntentChoice
 
-# TODO: добавить аннотации TypedDict для сущностей Яндекс.Диалогов
-#  - meta, session, version, response
-
 
 class NluField(BaseOrjsonSchema):
     """Поле `nlu` в запросе от Яндекс.Диалогов."""

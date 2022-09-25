@@ -16,14 +16,14 @@ class IntentChoice(str, enum.Enum):
     FILM_RATING = "film_rating"
     SEARCH_BY_DIRECTOR = "search_by_director"
     NOT_RECOGNIZED = "intent_not_recognized"
-    HELP = "help"
+    HELP = "YANDEX.WHAT_CAN_YOU_DO"
 
 
 class Message(enum.Enum):
     """Шаблоны ответов ассистента."""
 
     WELCOME_HELP_MESSAGE = """Привет! Я голосовой ассистент NETFLIX-VOICE-ASSISTANT, что бы узнать мои возможности
-                              скажите  Что ты умеешь?"""
+    скажите  Что ты умеешь?"""
     ERROR_MESSAGE = "Что-то пошло не так, попробуйте ещё раз."
     INTENT_NOT_FOUND = "Я не понимаю, что вы хотите узнать... пожалуйста переформулируйте вопрос"
     NOT_FOUND_MESSAGE_TEMPLATE = "По запросу {search_query} - ничего не найдено, повторите вопрос."
