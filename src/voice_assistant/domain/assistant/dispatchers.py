@@ -4,10 +4,10 @@ from dependency_injector.providers import Factory
 
 from voice_assistant.integrations.movies import MovieRepository
 
+from .base_services import AssistantService, get_assistant_service
 from .enums import AssistantProviderSlug, DefaultResponseMessage, ResponseMessageTemplate
 from .exceptions import FilmNotFoundError, UnknownAssistantProvider
 from .schemas import AssistantRequest, AssistantResponse, FilmFullDetail, IntentChoice
-from .services import AssistantService, get_assistant_service
 
 
 class AssistantProviderDispatcher:
