@@ -1,11 +1,11 @@
 from ..dispatchers import IntentDispatcher
 from ..enums import DefaultResponseMessage, IntentChoice
 from ..schemas import AssistantRequest
-from ..services import AssistantService
+from ..services import BaseAssistantService
 from .schemas import AliceRequest, AliceResponse
 
 
-class AliceService(AssistantService):
+class AliceService(BaseAssistantService):
     """Голосовой ассистент на основе Алисы."""
 
     def __init__(self, intent_dispatcher: IntentDispatcher) -> None:

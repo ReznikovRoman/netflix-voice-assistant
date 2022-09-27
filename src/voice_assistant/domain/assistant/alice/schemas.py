@@ -10,7 +10,7 @@ class NluField(BaseOrjsonSchema):
 
     tokens: list | None = Field(default_factory=list)
     entities: list | None = Field(default_factory=list)
-    intents: dict[IntentChoice, dict] = Field(default_factory=dict)
+    intents: dict[IntentChoice, dict] = {}
 
     @validator("intents", pre=True)
     def remove_redundant_intents(cls, value: dict[str, dict]) -> dict[IntentChoice, dict]:
@@ -28,7 +28,7 @@ class RequestField(BaseOrjsonSchema):
 
     command: str
     original_utterance: str
-    nlu: NluField | None = Field(default_factory=dict)
+    nlu: NluField | None = {}
 
 
 class AliceRequest(AssistantRequest):
@@ -38,7 +38,7 @@ class AliceRequest(AssistantRequest):
     request: RequestField
     session: dict
     version: str
-    state: dict | None = Field(default_factory=dict)
+    state: dict | None = {}
 
 
 class AliceResponse(AssistantResponse):
@@ -46,4 +46,4 @@ class AliceResponse(AssistantResponse):
 
     response: dict
     version: str
-    session_state: dict | None = Field(default_factory=dict)
+    session_state: dict | None = {}
