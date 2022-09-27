@@ -7,7 +7,7 @@ from .exceptions import UnknownAssistantProvider
 from .schemas import AssistantRequest, AssistantResponse
 
 
-class AssistantService(abc.ABC):
+class BaseAssistantService(abc.ABC):
     """Базовый сервис голосового ассистента."""
 
     @abc.abstractmethod
@@ -19,7 +19,9 @@ class AssistantService(abc.ABC):
         """Преобразование данных от провайдера в доменный объект."""
 
 
-def get_assistant_service(assistant_service_factory: Factory[AssistantService], *, provider: str) -> AssistantService:
+def get_assistant_service(
+    assistant_service_factory: Factory[BaseAssistantService], *, provider: str,
+) -> BaseAssistantService:
     """Получение класса для работы с провайдером по названию."""
     try:
         return assistant_service_factory(provider)
