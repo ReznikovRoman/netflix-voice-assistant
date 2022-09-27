@@ -7,13 +7,13 @@ from voice_assistant.integrations.movies import MovieRepository
 from .enums import AssistantProviderSlug, DefaultResponseMessage, ResponseMessageTemplate
 from .exceptions import FilmNotFoundError, UnknownAssistantProvider
 from .schemas import AssistantRequest, AssistantResponse, FilmFullDetail, IntentChoice
-from .services import AssistantService, get_assistant_service
+from .services import BaseAssistantService, get_assistant_service
 
 
 class AssistantProviderDispatcher:
     """Диспатчер провайдеров голосового помощника."""
 
-    def __init__(self, assistant_service_factory: Factory[AssistantService]) -> None:
+    def __init__(self, assistant_service_factory: Factory[BaseAssistantService]) -> None:
         self._assistant_service_factory = assistant_service_factory
 
     async def dispatch_provider(self, provider: AssistantProviderSlug, /, *, data: dict) -> AssistantResponse:
