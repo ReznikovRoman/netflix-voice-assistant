@@ -1,7 +1,7 @@
-from ..base_services import AssistantService
 from ..dispatchers import IntentDispatcher
 from ..enums import DefaultResponseMessage, IntentChoice
 from ..schemas import AssistantRequest
+from ..services import AssistantService
 from .schemas import AliceRequest, AliceResponse
 
 
