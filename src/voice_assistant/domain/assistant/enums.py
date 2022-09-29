@@ -50,24 +50,24 @@ class ResponseMessageTemplate(list[str], enum.Enum):
     ]
 
     FILM_RATING_MESSAGE_LIST = [
-        "Рейтинг фильма {film} {rating}",
-        "Пользователи оценили фильм {film} на {rating}",
-        "По моей информации рейтинг фильма {film} составляет {rating}",
+        "Рейтинг фильма '{film}' - {rating}",
+        "Пользователи оценили фильм '{film}' на {rating}",
+        "По моей информации рейтинг фильма '{film}' составляет {rating}",
     ]
 
     FILM_DIRECTOR_MESSAGE_LIST = [
-        "Режиссер фильма {director} - {film}",
-        "В фильме {film} режиссировал {director}",
+        "Режиссер фильма '{film}' - {director}",
+        "В фильме '{film}' режиссировал {director}",
     ]
 
     ACTORS_IN_FILM_MESSAGE_LIST = [
-        "В фильме {film} участвовали: {actors}",
-        "В фильме {film} снимались: {actors}",
-        "В картине {film} снимались: {actors}",
+        "В фильме '{film}' участвовали: {actors}",
+        "В фильме '{film}' снимались: {actors}",
+        "В картине '{film}' снимались: {actors}",
     ]
 
     FILM_DESCRIPTION_MESSAGE_LIST = [
-        "Рассказываю о фильме {film} {description}",
-        "Вот что я могу рассказать о фильме {film} {description}",
-        "Описание фильма {film} {description}",
+        "Рассказываю о фильме '{film}': {description}",
+        "Вот что я могу рассказать о фильме '{film}': {description}",
+        "Описание фильма '{film}': {description}",
     ]

@@ -43,16 +43,12 @@ frame NetflixVoiceAssistant {
     api_voice_assistant <-up-> base_traefik: "Обработка запроса\n от провайдера"
 }
 
-component NetflixMoviesClient
-
 yandex_provider_voice_assistant <-down-> base_traefik: "Голосовой ассистент"
-
-NetflixMoviesAPI <-up-> NetflixMoviesClient
 
 base_client <-down-> nginx_admin: "Управление фильмами, актерами и жанрами"
 base_client <-down-> base_traefik: "Основное АПИ онлайн-кинотеатра"
 
-NetflixMoviesClient <-down-> NetflixVoiceAssistant: "Получение данных \n для ответа ассистенту"
+NetflixMoviesAPI <-left-> NetflixVoiceAssistant: "Netflix Movies Client"
 
 NetflixAdmin -[hidden]-> NetflixETL
 NetflixETL -[hidden]-> NetflixMoviesAPI

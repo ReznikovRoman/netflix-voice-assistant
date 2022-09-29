@@ -1,10 +1,11 @@
 from dependency_injector import containers, providers
+from netflix.movies import client as movie_client
+from netflix.movies.client.stubs import MovieClientStub
 
 from voice_assistant.config.logging import configure_logger
 from voice_assistant.domain import assistant
 from voice_assistant.domain.assistant import alice
 from voice_assistant.integrations import movies
-from voice_assistant.integrations.movies.stubs import MovieClientStub
 
 
 async def dummy_resource() -> None:
@@ -27,16 +28,23 @@ class Container(containers.DeclarativeContainer):
 
     # Integrations
 
-    movie_client = providers.Singleton(movies.MovieClient)
+    movie_session = providers.Factory(
+        movie_client.AsyncMovieSession,
+        base_url=config.NETFLIX_MOVIES_BASE_URL,
+    )
+
+    movie_client = providers.Singleton(
+        movie_client.AsyncMovieClient,
+        session=movie_session,
+    )
 
     movie_repository = providers.Singleton(
         movies.MovieRepository,
         movie_client=movie_client,
     )
 
-    # Infrastructure
-
     # Domain -> Assistant
+
     intent_dispatcher = providers.Singleton(
         assistant.IntentDispatcher,
         movie_repository=movie_repository,

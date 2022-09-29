@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  server:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - $ENV
+    environment:
+      - NVA_PROJECT_BASE_URL=http://localhost:${NVA_SERVER_PORT}
+      - NVA_SERVER_HOSTS=http://localhost:${NVA_SERVER_PORT}
+    ports:
+      - ${NVA_SERVER_PORT}:${NVA_SERVER_PORT}
+    volumes:
+      - .:/app
+    command: >
+      sh -c "cd /app/src
+      && python -m uvicorn voice_assistant.main:create_app --factory --reload --host 0.0.0.0 --port $NVA_SERVER_PORT"
+    networks:
+      - voice_assistant_api
+      - movies_api
+
+networks:
+  voice_assistant_api:
+    name: voice_assistant_api
+    driver: bridge
+  movies_api:
+    external: true

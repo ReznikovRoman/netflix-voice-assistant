@@ -62,6 +62,7 @@ jobs:
           export NVA_API_V1_STR=/api/v1
           export NVA_SERVER_NAME=localhost
           export NVA_SERVER_HOSTS=http://api-voice-assistant.localhost:8012
+          export NVA_NETFLIX_MOVIES_BASE_URL=http://traefik:80
           export NVA_USE_STUBS=1
           export NVA_TESTING=1
           export NVA_CI=1
