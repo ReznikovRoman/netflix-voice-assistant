@@ -17,8 +17,12 @@ services:
       && python -m uvicorn voice_assistant.main:create_app --factory --reload --host 0.0.0.0 --port $NVA_SERVER_PORT"
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=voice_assistant_api"
       - "traefik.http.routers.voice_assistant_api.rule=Host(`api-voice-assistant.localhost`) || Host(`traefik`) || HostRegexp(`eu.ngrok.io`,`{subhost:[a-zA-Z0-9-]+}.eu.ngrok.io`)"
       - "traefik.http.routers.voice_assistant_api.entrypoints=web,web_secure"
+    networks:
+      - voice_assistant_api
+      - movies_api
 
   traefik:
     image: traefik:v2.8
@@ -38,3 +42,12 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     depends_on:
       - server
+    networks:
+      - voice_assistant_api
+
+networks:
+  voice_assistant_api:
+    name: voice_assistant_api
+    driver: bridge
+  movies_api:
+    external: true
