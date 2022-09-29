@@ -61,39 +61,39 @@ class IntentDispatcher:
     async def get_film_description(self, search_query: str, /) -> AssistantResponse:
         """Получение описания фильма."""
         try:
-            film_detail = await self._get_film_by_name(search_query)
+            film = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
             return await self._get_not_found_response(search_query=search_query)
         return AssistantResponse(
             text=random.choice(ResponseMessageTemplate.FILM_DESCRIPTION_MESSAGE_LIST).format(
-                film=search_query,
-                description=film_detail.description,
+                film=film.title.title(),
+                description=film.description,
             ),
         )
 
     async def get_film_actors(self, search_query: str, /) -> AssistantResponse:
         """Получение актеров в фильме."""
         try:
-            film_detail = await self._get_film_by_name(search_query)
+            film = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
             return await self._get_not_found_response(search_query=search_query)
         return AssistantResponse(
             text=random.choice(ResponseMessageTemplate.ACTORS_IN_FILM_MESSAGE_LIST).format(
-                film=search_query,
-                actors=film_detail.actors,
+                film=film.title.title(),
+                actors=film.actors,
             ),
         )
 
     async def get_film_directors(self, search_query: str, /) -> AssistantResponse:
         """Получение фильма по режиссеру."""
         try:
-            film_detail = await self._get_film_by_name(search_query)
+            film = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
             return await self._get_not_found_response(search_query=search_query)
         return AssistantResponse(
             text=random.choice(ResponseMessageTemplate.FILM_DIRECTOR_MESSAGE_LIST).format(
-                film=search_query,
-                director=film_detail.directors,
+                film=film.title.title(),
+                director=film.directors,
             ),
         )
 
@@ -104,7 +104,7 @@ class IntentDispatcher:
             return await self._get_not_found_response(search_query=search_query)
         return AssistantResponse(
             text=random.choice(ResponseMessageTemplate.FILM_RATING_MESSAGE_LIST).format(
-                film=search_query,
+                film=film.title.title(),
                 rating=film.imdb_rating,
             ),
         )
@@ -118,7 +118,7 @@ class IntentDispatcher:
         return AssistantResponse(
             text=random.choice(ResponseMessageTemplate.FIND_BY_DIRECTOR_MESSAGE_LIST).format(
                 films=films.films,
-                director=search_query.title(),
+                director=person.full_name.title(),
             ),
         )
 
