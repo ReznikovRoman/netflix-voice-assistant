@@ -52,6 +52,8 @@ NVA_PROJECT_NAME=netflix-voice-assistant
 NVA_API_V1_STR=/api/v1
 NVA_SERVER_NAME=localhost
 NVA_SERVER_HOSTS=http://api-voice-assistant.localhost:8012
+# Netflix Movies
+NVA_NETFLIX_MOVIES_BASE_URL=http://traefik:80
 # Config
 NVA_USE_STUBS=0
 NVA_TESTING=0
@@ -112,6 +114,8 @@ NVA_PROJECT_NAME=netflix-voice-assistant
 NVA_API_V1_STR=/api/v1
 NVA_SERVER_NAME=localhost
 NVA_SERVER_HOSTS=http://api-voice-assistant.localhost:8012
+# Netflix Movies
+NVA_NETFLIX_MOVIES_BASE_URL=http://traefik:80
 # Config
 NN_USE_STUBS=1
 NN_TESTING=1

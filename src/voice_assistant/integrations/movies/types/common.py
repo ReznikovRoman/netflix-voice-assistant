@@ -1,7 +1,14 @@
 import uuid
+from typing import TypeAlias
 
 from orjson import orjson
 from pydantic import BaseModel
+
+Id: TypeAlias = int
+
+TimeoutScalarType: TypeAlias = int | float
+TimeoutTupleType: TypeAlias = tuple[TimeoutScalarType, TimeoutScalarType]
+TimeoutType: TypeAlias = TimeoutScalarType | TimeoutTupleType
 
 
 def orjson_dumps(value, *, default):

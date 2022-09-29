@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     # Configuration
     USE_STUBS: bool = Field(False)
 
+    # Movies API
+    NETFLIX_MOVIES_BASE_URL: str
+
     class Config(EnvConfig):
         env_prefix = "NVA_"
         case_sensitive = True
