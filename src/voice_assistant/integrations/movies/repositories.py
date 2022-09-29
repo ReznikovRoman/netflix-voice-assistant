@@ -1,10 +1,10 @@
 import uuid
 
-from voice_assistant.domain.assistant.schemas import FilmFullDetail, FilmList, FilmShortDetail, PersonShortDetail
+from netflix.movies.client import AsyncMovieClient
+from netflix.movies.client.types import QueryOptions
+from netflix.movies.client.types.api import PageNumberPaginationOptions
 
-from .asynchronous import AsyncMovieClient
-from .types import QueryOptions
-from .types.api import PageNumberPaginationOptions
+from voice_assistant.domain.assistant.schemas import FilmFullDetail, FilmList, FilmShortDetail, PersonShortDetail
 
 
 class MovieRepository:
