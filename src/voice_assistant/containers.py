@@ -27,16 +27,23 @@ class Container(containers.DeclarativeContainer):
 
     # Integrations
 
-    movie_client = providers.Singleton(movies.MovieClient)
+    movie_session = providers.Factory(
+        movies.AsyncMoviesSession,
+        base_url=config.NETFLIX_MOVIES_BASE_URL,
+    )
+
+    movie_client = providers.Singleton(
+        movies.AsyncMovieClient,
+        session=movie_session,
+    )
 
     movie_repository = providers.Singleton(
         movies.MovieRepository,
         movie_client=movie_client,
     )
 
-    # Infrastructure
-
     # Domain -> Assistant
+
     intent_dispatcher = providers.Singleton(
         assistant.IntentDispatcher,
         movie_repository=movie_repository,

@@ -2,7 +2,7 @@ import uuid
 
 from voice_assistant.domain.assistant.schemas import FilmFullDetail, FilmList, FilmShortDetail, PersonShortDetail
 
-from .clients import MovieClient
+from .asynchronous import AsyncMovieClient
 from .types import QueryOptions
 from .types.api import PageNumberPaginationOptions
 
@@ -10,16 +10,17 @@ from .types.api import PageNumberPaginationOptions
 class MovieRepository:
     """Репозиторий для работы с данными из сервиса Netflix Movies."""
 
-    def __init__(self, movie_client: MovieClient) -> None:
-        assert isinstance(movie_client, MovieClient)
+    def __init__(self, movie_client: AsyncMovieClient) -> None:
+        assert isinstance(movie_client, AsyncMovieClient)
         self._movie_client = movie_client
 
     async def find_movie_by_name(self, name: str, /) -> FilmShortDetail | None:
         """Поиск фильмов по названию."""
-        films = await self._movie_client.search_films(name, options=self._create_query_options(page_size=1))
+        films = await self._movie_client.search_films(
+            name, fetch_all=False, options=self._create_query_options(page_size=1))
         try:
             film = films[0]
-        except TypeError:
+        except (TypeError, IndexError):
             return None
         return FilmShortDetail(film_id=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
 
@@ -31,16 +32,17 @@ class MovieRepository:
             title=film.title,
             imdb_rating=film.imdb_rating,
             description=film.description,
-            actors=" ".join([actors.full_name for actors in film.actors]),
-            directors=" ".join([directors.full_name for directors in film.directors]),
+            actors=", ".join([actors.full_name for actors in film.actors]),
+            directors=", ".join([directors.full_name for directors in film.directors]),
         )
 
     async def find_person_by_name(self, person_name: str, /) -> PersonShortDetail | None:
         """Поиск по персоне."""
-        persons = await self._movie_client.search_persons(person_name, options=self._create_query_options(page_size=1))
+        persons = await self._movie_client.search_persons(
+            person_name, fetch_all=False, options=self._create_query_options(page_size=1))
         try:
             person = persons[0]
-        except TypeError:
+        except (TypeError, IndexError):
             return None
         return PersonShortDetail(
             person_id=person.uuid,
