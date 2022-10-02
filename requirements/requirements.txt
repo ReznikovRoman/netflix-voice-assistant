@@ -454,8 +454,8 @@ multidict==6.0.2 \
     # via
     #   aiohttp
     #   yarl
-netflix-movies-client @ https://github.com/ReznikovRoman/netflix-movies-client/archive/d6793251761cdbb8f6aea046edead00d7783d454.zip \
-    --hash=sha256:ffaf4a17316d520af180bc21a9a244953399db0c73c5fba004772fb47deba610
+netflix-movies-client @ https://github.com/ReznikovRoman/netflix-movies-client/archive/refs/tags/0.3.1.zip \
+    --hash=sha256:ad49508807645fdfae36017ba1fa5ed33ed3ca377f36e70090385200b380d110
     # via -r requirements.in
 orjson==3.8.0 \
     --hash=sha256:02d638d43951ba346a80f0abd5942a872cc87db443e073f6f6fc530fee81e19b \

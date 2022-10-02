@@ -16,7 +16,7 @@ class MovieRepository:
 
     async def find_movie_by_name(self, name: str, /) -> FilmShortDetail | None:
         """Поиск фильмов по названию."""
-        films = await self._movie_client.search_films(
+        films = await self._movie_client.find_films(
             name, fetch_all=False, options=self._create_query_options(page_size=1))
         try:
             film = films[0]
@@ -26,7 +26,7 @@ class MovieRepository:
 
     async def get_movie_by_id(self, film_id: uuid.UUID, /) -> FilmFullDetail:
         """Получение фильма по id."""
-        film = await self._movie_client.get_film_by_id(film_id)
+        film = await self._movie_client.fetch_film_by_id(film_id)
         return FilmFullDetail(
             film_id=film_id,
             title=film.title,
@@ -38,7 +38,7 @@ class MovieRepository:
 
     async def find_person_by_name(self, person_name: str, /) -> PersonShortDetail | None:
         """Поиск по персоне."""
-        persons = await self._movie_client.search_persons(
+        persons = await self._movie_client.find_persons(
             person_name, fetch_all=False, options=self._create_query_options(page_size=1))
         try:
             person = persons[0]
@@ -51,7 +51,7 @@ class MovieRepository:
 
     async def get_person_films(self, person_id: uuid.UUID, /) -> FilmList:
         """Получение фильмов с участием данной персоны."""
-        films = await self._movie_client.get_person_films(person_id)
+        films = await self._movie_client.fetch_person_films(person_id)
         return FilmList(films=", ".join([film.title for film in films]))
 
     @staticmethod
