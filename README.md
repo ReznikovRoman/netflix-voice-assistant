@@ -2,7 +2,8 @@
 Service for working with  _Netflix_ voice assistants.
 
 ## Stack
-FastAPI, Yandex.Dialogs (voice assistant provider)
+[FastAPI](https://fastapi.tiangolo.com/), [Yandex.Dialogs](https://yandex.ru/dev/dialogs/alice/doc/about.html)
+(voice assistant provider)
 
 ## Services
 - Netflix Admin:
