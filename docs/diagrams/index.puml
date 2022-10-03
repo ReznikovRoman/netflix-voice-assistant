@@ -32,21 +32,21 @@ frame NetflixMoviesAPI {
     component "API" as api_movies
     database "Redis" as redis_movies
 
-    api_movies <-up-> base_traefik: "АПИ фильмов"
+    api_movies <-up-> base_traefik: "Movies API"
     api_movies <-down- elasticsearch_etl
-    api_movies <-down-> redis_movies: "Кэширование"
+    api_movies <-down-> redis_movies: "Cache"
 }
 
 frame NetflixVoiceAssistant {
     component "API" as api_voice_assistant
 
-    api_voice_assistant <-up-> base_traefik: "Обработка запроса\n от провайдера"
+    api_voice_assistant <-up-> base_traefik: "Processing request\n from provider"
 }
 
-yandex_provider_voice_assistant <-down-> base_traefik: "Голосовой ассистент"
+yandex_provider_voice_assistant <-down-> base_traefik: "Voice assistant"
 
-base_client <-down-> nginx_admin: "Управление фильмами, актерами и жанрами"
-base_client <-down-> base_traefik: "Основное АПИ онлайн-кинотеатра"
+base_client <-down-> nginx_admin: "Films, actors and genres management"
+base_client <-down-> base_traefik: "Core Netflix API"
 
 NetflixMoviesAPI <-left-> NetflixVoiceAssistant: "Netflix Movies Client"
 

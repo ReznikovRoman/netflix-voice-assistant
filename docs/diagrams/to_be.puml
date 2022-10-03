@@ -38,9 +38,9 @@ frame NetflixMoviesAPI {
     component "API" as api_movies
     database "Redis" as redis_movies
 
-    api_movies <--up-> base_traefik: "АПИ фильмов"
+    api_movies <--up-> base_traefik: "Movies API"
     api_movies <-down- elasticsearch_etl
-    api_movies <-down-> redis_movies: "Кэширование"
+    api_movies <-down-> redis_movies: "Cache"
 }
 
 frame NetflixAuthAPI {
@@ -48,10 +48,14 @@ frame NetflixAuthAPI {
     database "Postgres" as postgres_auth
     database "Redis" as redis_auth
 
-    api_auth <--up-> base_traefik: "Работа с пользователями и управление ролями"
-    api_auth <-up-> auth0: "Защита приватного АПИ ролей"
+    api_auth <--up-> base_traefik: "Users and roles management"
+    api_auth <-up-> auth0: "Private roles API"
     api_auth <-down-> postgres_auth
-    api_auth <-down-> redis_auth: "Хранение использованных JWT"
+    api_auth <-down-> redis_auth
+
+    note right of redis_auth
+    Used JWTs
+    end note
 }
 
 frame NetflixUGC {
@@ -64,15 +68,25 @@ frame NetflixUGC {
     database "MongoDB" as mongo_ugc
     database "ClickHouse" as clickhouse_ugc
 
-    api_ugc <--up-> base_traefik: "Работа с пользовательским контентом"
+    api_ugc <--up-> base_traefik: "User generated content"
     api_ugc <-down- redis_stack_ugc
-    api_ugc <-down-> mongo_ugc: "Пользовательские рецензии"
+    api_ugc <-down-> mongo_ugc
     api_ugc -down-> producer_ugc
-    producer_ugc -down-> kafka_ugc: "Создание сообщений о действиях пользователя. \nНапример, добавление фильма в закладки"
+    producer_ugc -down-> kafka_ugc: "Producing messages about user actions. \nFor example, adding a movie to bookmarks"
     kafka_ugc -down-> consumer_ugc_redis
-    consumer_ugc_redis -down-> redis_stack_ugc: "Пользовательский контент"
-    kafka_ugc -down-> consumer_clickhouse: "Обработка различных действий пользователя"
-    consumer_clickhouse -down-> clickhouse_ugc: "Данные для аналитики"
+    consumer_ugc_redis -down-> redis_stack_ugc
+    kafka_ugc -down-> consumer_clickhouse: "Processing user actions/data"
+    consumer_clickhouse -down-> clickhouse_ugc: "ETL"
+
+    note bottom of mongo_ugc
+    User reviews
+    end note
+    note bottom of redis_stack_ugc
+    User content
+    end note
+    note right of clickhouse_ugc
+    Analytics data
+    end note
 }
 
 frame NetflixNotifications {
@@ -87,40 +101,40 @@ frame NetflixNotifications {
         component "Worker N" as worker_n_notifications
     }
 
-    api_notifications <--up-> base_traefik: "Работа с уведомлениями"
+    api_notifications <--up-> base_traefik: "Notifications management"
     api_notifications <-down-> redis_stack_notifications
-    api_notifications -down-> queue_notifications: "Отправка уведомления"
-    api_notifications -down-> scheduler_notifications: "Настройка уведомлений по расписанию"
-    queue_notifications <-down- WorkerGroupNotifications: "Обработка сообщений из очереди"
+    api_notifications -down-> queue_notifications: "Sending a notification"
+    api_notifications -down-> scheduler_notifications: "Configuration of scheduled notifications"
+    queue_notifications <-down- WorkerGroupNotifications: "Processing messages from queue"
     scheduler_notifications -down-> queue_notifications
     WorkerGroupNotifications <-down-> redis_stack_notifications
 
     note right of queue_notifications
-    Очередь сообщений Celery
+    Celery message queue
     end note
     note bottom of redis_stack_notifications
-    Данные по уведомлениям
+    Notifications data
     end note
 }
 
 frame NetflixVoiceAssistant {
     component "API" as api_voice_assistant
 
-    api_voice_assistant <--up-> base_traefik: "Обработка запроса\n от провайдера"
+    api_voice_assistant <--up-> base_traefik: "Processing request\n from provider"
 }
 
 component NetflixMoviesClient
 
-NetflixNotifications -up-> sendgrid: "Отправка писем"
-NetflixNotifications -up-> pusher: "Отправка push-уведомлений"
-NetflixNotifications -up-> twilio: "Отправка СМС"
+NetflixNotifications -up-> sendgrid: "Email"
+NetflixNotifications -up-> pusher: "Push-notifications"
+NetflixNotifications -up-> twilio: "SMS"
 
-yandex_provider_voice_assistant <-down-> NetflixVoiceAssistant: "Голосовой ассистент"
+yandex_provider_voice_assistant <-down-> base_traefik: "Voice assistant"
 
 NetflixMoviesAPI <-up-> NetflixMoviesClient
 
-base_client <-down-> nginx_admin: "Управление фильмами, актерами и жанрами"
-base_client <-down-> base_traefik: "Основное АПИ онлайн-кинотеатра"
+base_client <-down-> nginx_admin: "Films, actors and genres management"
+base_client <-down-> base_traefik: "Core Netflix API"
 
 NetflixMoviesClient <-down-> NetflixVoiceAssistant
 @enduml

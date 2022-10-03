@@ -1,42 +1,46 @@
 # Netflix Voice Assistant
-Сервис для работы с голосовым ассистентом в онлайн-кинотеатре _Netflix_.
+Service for working with  _Netflix_ voice assistants.
 
-## Сервисы
+## Stack
+FastAPI, Yandex.Dialogs (voice assistant provider)
+
+## Services
 - Netflix Admin:
-  - Панель администратора для управления онлайн-кинотеатром (редактирование фильмов, жанров, актеров)
+  - Online-cinema management panel. Admins can manage films, genres, actors/directors/writers/...
   - https://github.com/ReznikovRoman/netflix-admin
 - Netflix ETL:
-  - ETL пайплайн для синхронизации данных между БД сервиса Netflix Admin и Elasticsearch
+  - ETL pipeline for synchronizing data between "Netflix Admin" database and Elasticsearch
   - https://github.com/ReznikovRoman/netflix-etl
 - Netflix Movies API:
-  - АПИ фильмов
+  - Movies API
   - https://github.com/ReznikovRoman/netflix-movies-api
-    - Python клиент: https://github.com/ReznikovRoman/netflix-movies-client
+    - Python client: https://github.com/ReznikovRoman/netflix-movies-client
 - Netflix Auth API:
-  - Сервис авторизации - управление пользователями и ролями
+  - Authorization service - users and roles management
   - https://github.com/ReznikovRoman/netflix-auth-api
 - Netflix UGC:
-  - Сервис для работы с пользовательским контентом
+  - Service for working with user generated content (comments, likes, film reviews, etc.)
   - https://github.com/ReznikovRoman/netflix-ugc
 - Netflix Notifications:
-  - Сервис для отправки уведомлений
+  - Notifications service (email, mobile, push)
   - https://github.com/ReznikovRoman/netflix-notifications
 - Netflix Voice Assistant:
-  - Голосовой ассистент Netflix
+  - Online-cinema voice assistant
   - https://github.com/ReznikovRoman/netflix-voice-assistant
 
-## Настройка и запуск
-docker-compose содержат контейнеры:
+## Configuration
+Docker containers:
  1. server
  2. traefik
 
-Файлы docker-compose:
- 1. `docker-compose.yml` - для локальной разработки.
- 2. `tests/functional/docker-compose.yml` - для функциональных тестов.
+docker-compose files:
+ 1. `docker-compose.yml` - for local development.
+ 2. `docker-compose-dev.yml` - for local development (without traefik).
+ 3. `tests/functional/docker-compose.yml` - for functional tests.
 
-Для запуска контейнеров нужно создать файл `.env` в корне проекта.
+To run docker containers, you need to create a `.env` file in the root directory.
 
-**Пример `.env`:**
+**`.env` example:**
 
 ```dotenv
 ENV=.env
@@ -61,28 +65,28 @@ NVA_TESTING=0
 NVA_CI=0
 ```
 
-### Запуск проекта:
+### Start project:
 
-Локально:
+Locally:
 ```shell
 docker-compose build
 docker-compose up
 ```
 
-## Разработка
-Синхронизировать окружение с `requirements.txt` / `requirements.dev.txt` (установит отсутствующие пакеты, удалит лишние, обновит несоответствующие версии):
+## Development
+Sync environment with `requirements.txt` / `requirements.dev.txt` (will install/update missing packages, remove redundant ones):
 ```shell
 make sync-requirements
 ```
 
-Сгенерировать requirements.\*.txt files (нужно пере-генерировать после изменений в файлах requirements.\*.in):
+Compile requirements.\*.txt files (have to re-compile after changes in requirements.\*.in):
 ```shell
 make compile-requirements
 ```
 
-Используем `requirements.local.in` для пакетов, которые нужно только разработчику. Обязательно нужно указывать _constraints files_ (-c ...)
+Use `requirements.local.in` for local dependencies; always specify _constraints files_ (-c ...)
 
-Пример:
+Example:
 ```shell
 # requirements.local.txt
 
@@ -91,15 +95,15 @@ make compile-requirements
 ipython
 ```
 
-### Тесты
-Запуск тестов (всех, кроме функциональных) с экспортом переменных окружения из `.env` файла:
+### Tests
+Run unit tests (export environment variables from `.env` file):
 ```shell
 export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst) && make test
 ```
 
-Для функциональных тестов нужно создать файл `.env` в папке ./tests/functional
+To run functional tests, you need to create `.env` in ./tests/functional directory
 
-**Пример `.env` (для корректной работы тестов надо подставить корректные значения для NAA):**
+**`.env` example:**
 ```dotenv
 ENV=.env
 
@@ -123,29 +127,29 @@ NN_TESTING=1
 NN_CI=0
 ```
 
-Запуск функциональных тестов:
+Run functional tests:
 ```shell
 cd ./tests/functional && docker-compose up test
 ```
 
-Или через рецепт Makefile:
+Makefile recipe:
 ```shell
 make dtf
 ```
 
 ### Code style:
-Перед коммитом проверяем, что код соответствует всем требованиям:
+Before pushing a commit run all linters:
 
 ```shell
 make lint
 ```
 
 ### pre-commit:
-Для настройки pre-commit:
+pre-commit installation:
 ```shell
 pre-commit install
 ```
 
-## Документация
-Документация в формате OpenAPI 3 доступна по адресам:
+## Documentation
+OpenAPI 3 documentation:
 - `${PROJECT_BASE_URL}/api/v1/docs` - Swagger

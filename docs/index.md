@@ -1,15 +1,15 @@
 # Netflix Voice Assistant
-Голосовой ассистент в онлайн-кинотеатре _Netflix_.
+_Netflix_ voice assistant.
 
 ## Технологии
 - FastAPI
-- Провайдеры голосовых ассистентов:
-  - Yandex.Alice
+- Voice assistant providers:
+  - Yandex.Alice/Yandex.Dialogs
 
 ## АПИ
-- Запросы от провайдеров голосовых ассистентов
+- Request from voice assistant provider
   - `POST api/v1/assistants/requests/process/{provider}`
-  - Пример запроса для Яндекс.Диалогов
+  - e.g. request from Yandex.Dialogs
   ```json
     {
      "meta": {
@@ -36,14 +36,15 @@
          "new": true
        },
        "request": {
-         "command": "расскажи о фильме тор",
-         "original_utterance": "расскажи о фильме тор",
+         "command": "tell me about film pulp fiction",
+         "original_utterance": "tell me about film pulp fiction",
          "nlu": {
            "tokens": [
-             "расскажи",
-             "о",
-             "фильме",
-             "тор"
+             "tell",
+             "me",
+             "about",
+             "film",
+             "pulp fiction"
            ],
            "entities": [],
            "intents": {
@@ -55,7 +56,7 @@
                      "start": 3,
                      "end": 4
                    },
-                   "value": "тор"
+                   "value": "pulp fiction"
                  }
                }
              }
@@ -74,18 +75,18 @@
        "version": "1.0"
     }
   ```
-  - Пример тела ответа для Яндекс.Диалоги
+  - e.g. response for Yandex.Dialogs
     ```json
       {
-        "text": "По запросу тор - ничего не найдено 😒,  повторите вопрос.",
+        "text": "Couldn't find anything for `pulp fiction`.",
         "response": {
-          "text": "По запросу тор - ничего не найдено 😒,  повторите вопрос.",
+          "text": "Couldn't find anything for `pulp fiction`.",
           "end_session": false
         },
         "version": "1.0",
         "session_state": {
           "intent": "film_description",
-          "search_query": "тор"
+          "search_query": "pulp fiction"
         }
       }
     ```

@@ -35,7 +35,7 @@ frame NetflixMoviesAPI {
 
     api_movies <-up-> traefik_movies
     api_movies <-down- elasticsearch_etl
-    api_movies <-down-> redis_movies: "Кэширование"
+    api_movies <-down-> redis_movies: "Cache"
 }
 
 frame NetflixAuthAPI {
@@ -46,9 +46,13 @@ frame NetflixAuthAPI {
     database "Redis" as redis_auth
 
     api_auth <-up-> traefik_auth
-    api_auth <-up-> auth0_auth: "Защита приватного АПИ ролей"
+    api_auth <-up-> auth0_auth: "Private API"
     api_auth <-down-> postgres_auth
-    api_auth <-down-> redis_auth: "Хранение использованных JWT"
+    api_auth <-down-> redis_auth
+
+    note right of redis_auth
+    Used JWTs
+    end note
 }
 
 frame NetflixUGC {
@@ -64,13 +68,23 @@ frame NetflixUGC {
 
     api_ugc <-up-> traefik_ugc
     api_ugc <-down- redis_stack_ugc
-    api_ugc <-down-> mongo_ugc: "Пользовательские рецензии"
+    api_ugc <-down-> mongo_ugc
     api_ugc -down-> producer_ugc
-    producer_ugc -down-> kafka_ugc: "Создание сообщений о действиях пользователя. \nНапример, добавление фильма в закладки"
+    producer_ugc -down-> kafka_ugc: "Producing messages about user actions. \nFor example, adding a movie to bookmarks"
     kafka_ugc -down-> consumer_ugc_redis
-    consumer_ugc_redis -down-> redis_stack_ugc: "Пользовательский контент"
-    kafka_ugc -down-> consumer_clickhouse: "Обработка различных действий пользователя"
-    consumer_clickhouse -down-> clickhouse_ugc: "Данные для аналитики"
+    consumer_ugc_redis -down-> redis_stack_ugc
+    kafka_ugc -down-> consumer_clickhouse: "Processing user actions/data"
+    consumer_clickhouse -down-> clickhouse_ugc: "ETL"
+
+    note bottom of mongo_ugc
+    User reviews
+    end note
+    note bottom of redis_stack_ugc
+    User content
+    end note
+    note right of clickhouse_ugc
+    Analytics data
+    end note
 }
 
 frame NetflixNotifications {
@@ -88,27 +102,27 @@ frame NetflixNotifications {
 
     api_notifications <-up-> traefik_notifications
     api_notifications <-down-> redis_stack_notifications
-    api_notifications -down-> queue_notifications: "Отправка уведомления"
-    api_notifications -down-> scheduler_notifications: "Настройка уведомлений по расписанию"
-    queue_notifications <-down- WorkerGroupNotifications: "Обработка сообщений из очереди"
+    api_notifications -down-> queue_notifications: "Sending a notification"
+    api_notifications -down-> scheduler_notifications: "Configuration of scheduled notifications"
+    queue_notifications <-down- WorkerGroupNotifications: "Processing messages from queue"
     scheduler_notifications -down-> queue_notifications
     WorkerGroupNotifications <-down-> redis_stack_notifications
 
     note right of queue_notifications
-    Очередь сообщений Celery
+    Celery message queue
     end note
     note bottom of redis_stack_notifications
-    Данные по уведомлениям
+    Notifications data
     end note
 }
 
-NetflixNotifications -up-> sendgrid: "Отправка писем"
-NetflixNotifications -up-> pusher: "Отправка push-уведомлений"
-NetflixNotifications -up-> twilio: "Отправка СМС"
+NetflixNotifications -up-> sendgrid: "Email"
+NetflixNotifications -up-> pusher: "Push-notifications"
+NetflixNotifications -up-> twilio: "SMS"
 
-base_client <-down-> nginx_admin: "Управление фильмами, актерами и жанрами"
-base_client <-down-> traefik_movies: "Основное АПИ онлайн-кинотеатра"
-base_client <-down-> traefik_auth: "Работа с пользователями и управление ролями"
-base_client <-down-> traefik_ugc: "Работа с пользовательским контентом"
-base_client <-down-> traefik_notifications: "Работа с уведомлениями"
+base_client <-down-> nginx_admin: "Films, actors and genres management"
+base_client <-down-> traefik_movies: "Core movies API"
+base_client <-down-> traefik_auth: "Users and roles management"
+base_client <-down-> traefik_ugc: "User generated content"
+base_client <-down-> traefik_notifications: "Notifications management"
 @enduml
