@@ -4,7 +4,7 @@ from voice_assistant.common.exceptions import BaseNetflixVoiceAssistantError, Ne
 
 
 class UnknownAssistantProvider(NetflixVoiceAssistantError):
-    """Неизвестный провайдер голосового ассистента."""
+    """Unknown voice assistant provider."""
 
     message = "Unknown assistant provider"
     code = "unknown_assistant_provider"
@@ -12,4 +12,4 @@ class UnknownAssistantProvider(NetflixVoiceAssistantError):
 
 
 class FilmNotFoundError(BaseNetflixVoiceAssistantError):
-    """Фильм по данному названию не найден."""
+    """Film was not found by the given query."""

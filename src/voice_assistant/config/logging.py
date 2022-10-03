@@ -2,7 +2,7 @@ import logging
 
 
 def configure_logger() -> None:
-    """Базовая настройка встроенного логгера."""
+    """Basic logging configuration."""
     logging.basicConfig(
         level=logging.INFO,
         format="[%(asctime)s] [%(levelname)s] [%(name)s]: %(message)s",

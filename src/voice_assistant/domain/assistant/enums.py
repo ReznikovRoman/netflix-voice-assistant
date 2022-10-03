@@ -2,13 +2,13 @@ import enum
 
 
 class AssistantProviderSlug(str, enum.Enum):
-    """Провайдер голосового ассистента."""
+    """Voice assistant provider."""
 
     YANDEX_ALICE = "yandex_alice"
 
 
 class IntentChoice(str, enum.Enum):
-    """Список намерений пользователя."""
+    """Available intents."""
 
     FILM_DESCRIPTION = "film_description"
     FILM_ACTORS = "actors_in_the_film"
@@ -21,53 +21,54 @@ class IntentChoice(str, enum.Enum):
 
 
 class DefaultResponseMessage(str, enum.Enum):
-    """Ответы голосового ассистента по умолчанию."""
+    """Default voice assistant responses."""
 
     WELCOME_HELP_MESSAGE = (
-        "Привет! Я голосовой ассистент Netflix 😉, что бы узнать мои возможности скажите Что ты умеешь?🙈"
+        "Hi! I'm Netflix voice assistant 😉, to find out my features say 'What can you do?'🙈"
     )
-    ERROR_MESSAGE = "Что-то пошло не так 🫣, попробуйте ещё раз."
-    INTENT_NOT_FOUND = "Я не понимаю, что вы хотите узнать... пожалуйста переформулируйте вопрос 🧐"
+    ERROR_MESSAGE = "Something went wrong 🫣, try once again."
+    INTENT_NOT_FOUND = "I didn't get your question... please ask again 🧐"
     MISSING_SEARCH_QUERY = (
-        "Вы не уточнили, про что именно хотите узнать?😏 назовите условие поиска, например расскажи про фильм ТОР"
+        "You haven't specified what exactly do you want to know about?😏 Refine your search, "
+        "for example say 'Tell me about movie 'Pulp fiction'.'"
     )
-    NOT_FOUND_MESSAGE_TEMPLATE = "По запросу {search_query} - ничего не найдено 😒,  повторите вопрос."
+    NOT_FOUND_MESSAGE_TEMPLATE = "Nothing was found on '{search_query}' 😒, please ask again."
     HELP = (
-        "Скажите кто снимался в фильме ..., чтобы узнать актеров из фильма, 👥"
-        "расскажи про фильм..., для получения описания фильма, 🎥"
-        "кто режиссер фильма..., чтобы узнать режиссера, 🧔"
-        "какой рейтинг у фильма..., чтобы узнать рейтинг, 📈"
-        "найди фильмы режиссера..., чтобы получить фильмы определенного режиссера 🎥"
+        "Ask 'Who starred in movie ...', to know film crew, 👥"
+        "'Tell me about movie ...', to get a description of the movie, 🎥"
+        "'Who is the director of the movie ...', to know the director, 🧔"
+        "'What is the rating of the film ...', to get film's rating, 📈"
+        "'Find director's movies ...', to get films of a certain director 🎥"
     )
 
 
 class ResponseMessageTemplate(list[str], enum.Enum):
-    """Шаблоны ответов на запросы пользователя."""
+    """Response templates."""
 
     FIND_BY_DIRECTOR_MESSAGE_LIST = [
-        "Режиссер {director} участвовал в {films}",
-        "{director} режиссировал в {films}",
+        "Director {director} participated in {films}",
+        "{director} directed in {films}",
     ]
 
     FILM_RATING_MESSAGE_LIST = [
-        "Рейтинг фильма '{film}' - {rating}",
-        "Пользователи оценили фильм '{film}' на {rating}",
-        "По моей информации рейтинг фильма '{film}' составляет {rating}",
+        "Rating of the film '{film}' - {rating}",
+        "Users rated the film '{film}' by {rating}",
+        "According to my information, the rating of the film '{film}' is {rating}",
     ]
 
     FILM_DIRECTOR_MESSAGE_LIST = [
-        "Режиссер фильма '{film}' - {director}",
-        "В фильме '{film}' режиссировал {director}",
+        "The director of the film '{film}' - {director}",
+        "Movie '{film}' was directed by {director}",
     ]
 
     ACTORS_IN_FILM_MESSAGE_LIST = [
-        "В фильме '{film}' участвовали: {actors}",
-        "В фильме '{film}' снимались: {actors}",
-        "В картине '{film}' снимались: {actors}",
+        "In the film '{film}' participated: {actors}",
+        "In the film '{film}' starred: {actors}",
+        "In the movie '{film}' starred: {actors}",
     ]
 
     FILM_DESCRIPTION_MESSAGE_LIST = [
-        "Рассказываю о фильме '{film}': {description}",
-        "Вот что я могу рассказать о фильме '{film}': {description}",
-        "Описание фильма '{film}': {description}",
+        "I'm telling you about the movie '{film}': {description}",
+        "Here's what I can tell you about the film '{film}': {description}",
+        "Description of the film '{film}': {description}",
     ]

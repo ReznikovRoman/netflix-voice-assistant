@@ -1,12 +1,12 @@
 # Netflix Voice Assistant
 _Netflix_ voice assistant.
 
-## Технологии
-- FastAPI
+## Stack
+- [FastAPI](https://fastapi.tiangolo.com/)
 - Voice assistant providers:
-  - Yandex.Alice/Yandex.Dialogs
+  - [Yandex.Alice/Yandex.Dialogs](https://yandex.ru/dev/dialogs/alice/doc/about.html)
 
-## АПИ
+## API
 - Request from voice assistant provider
   - `POST api/v1/assistants/requests/process/{provider}`
   - e.g. request from Yandex.Dialogs

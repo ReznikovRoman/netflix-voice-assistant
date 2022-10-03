@@ -8,14 +8,14 @@ from voice_assistant.domain.assistant.schemas import FilmFullDetail, FilmList, F
 
 
 class MovieRepository:
-    """Репозиторий для работы с данными из сервиса Netflix Movies."""
+    """Repository for working with data from Netflix Movies service."""
 
     def __init__(self, movie_client: AsyncMovieClient) -> None:
         assert isinstance(movie_client, AsyncMovieClient)
         self._movie_client = movie_client
 
     async def find_movie_by_name(self, name: str, /) -> FilmShortDetail | None:
-        """Поиск фильмов по названию."""
+        """Find movie by name."""
         films = await self._movie_client.find_films(
             name, fetch_all=False, options=self._create_query_options(page_size=1))
         try:
@@ -25,7 +25,7 @@ class MovieRepository:
         return FilmShortDetail(film_id=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
 
     async def get_movie_by_id(self, film_id: uuid.UUID, /) -> FilmFullDetail:
-        """Получение фильма по id."""
+        """Get film by id."""
         film = await self._movie_client.fetch_film_by_id(film_id)
         return FilmFullDetail(
             film_id=film_id,
@@ -37,7 +37,7 @@ class MovieRepository:
         )
 
     async def find_person_by_name(self, person_name: str, /) -> PersonShortDetail | None:
-        """Поиск по персоне."""
+        """Find person by name."""
         persons = await self._movie_client.find_persons(
             person_name, fetch_all=False, options=self._create_query_options(page_size=1))
         try:
@@ -50,12 +50,12 @@ class MovieRepository:
         )
 
     async def get_person_films(self, person_id: uuid.UUID, /) -> FilmList:
-        """Получение фильмов с участием данной персоны."""
+        """Get person's films."""
         films = await self._movie_client.fetch_person_films(person_id)
         return FilmList(films=", ".join([film.title for film in films]))
 
     @staticmethod
     def _create_query_options(*, page_size: int) -> QueryOptions:
-        """Создание настроек для запроса."""
+        """Create query options for API request."""
         pagination_options = PageNumberPaginationOptions(page_size=page_size)
         return QueryOptions(page_number_pagination=pagination_options)

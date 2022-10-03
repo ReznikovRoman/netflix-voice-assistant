@@ -6,15 +6,15 @@ from .schemas import AliceRequest, AliceResponse
 
 
 class AliceService(BaseAssistantService):
-    """Голосовой ассистент на основе Алисы."""
+    """Voice assistant based on Yandex.Dialogs."""
 
     def __init__(self, intent_dispatcher: IntentDispatcher) -> None:
         assert isinstance(intent_dispatcher, IntentDispatcher)
         self._intent_dispatcher = intent_dispatcher
 
     async def process_request(self, request: AliceRequest, /) -> AliceResponse:
-        """Процесс обработки запросов от Алисы."""
-        if not request.request.command:  # первичный запрос (всегда приветственный/ознакомительный)
+        """Process request from Yandex.Dialogs."""
+        if not request.request.command:  # first ("welcome") request
             response_text = DefaultResponseMessage.WELCOME_HELP_MESSAGE
             return self._build_response(
                 text=response_text,
@@ -43,15 +43,15 @@ class AliceService(BaseAssistantService):
 
     @staticmethod
     def _build_response(*, text: str, version: str, response: dict, session_state: dict) -> AliceResponse:
-        """Построение ответа для Яндекс.Диалогов."""
+        """Build response for Yandex.Dialogs."""
         return AliceResponse(text=text, version=version, response=response, session_state=session_state)
 
     @staticmethod
     def _build_assistant_request_from_provider(alice_request: AliceRequest, /) -> AssistantRequest:
-        """Построение базового запроса на основе данных от провайдера."""
+        """Build base request by provider data."""
         intent = IntentChoice.NOT_RECOGNIZED
         search_query = alice_request.state.get("session").get("search_query")
-        if alice_request.request.nlu.intents:  # если есть поисковый запрос
+        if alice_request.request.nlu.intents:  # if there is a search query
             intent = list(alice_request.request.nlu.intents.keys())[0]
             search_query = (
                 alice_request.request.nlu.intents.get(intent, {})

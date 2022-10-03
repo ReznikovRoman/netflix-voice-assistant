@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 
 class APIErrorMixin:
-    """Миксин для ошибки REST API."""
+    """REST API error mixin."""
 
     message: str
     code: str
@@ -28,15 +28,15 @@ class APIErrorMixin:
 
 
 class BaseNetflixVoiceAssistantError(Exception):
-    """Базовая ошибка сервиса."""
+    """Base service error."""
 
 
 class NetflixVoiceAssistantError(APIErrorMixin, BaseNetflixVoiceAssistantError):
-    """Ошибка сервиса Netflix Voice Assistant."""
+    """Netflix Voice Assistant service error."""
 
 
 class NotFoundError(NetflixVoiceAssistantError):
-    """Ресурс не найден."""
+    """Resource is not found."""
 
     message = "Resource not found"
     code = "not_found"
@@ -44,7 +44,7 @@ class NotFoundError(NetflixVoiceAssistantError):
 
 
 class ConflictError(NetflixVoiceAssistantError):
-    """Конфликт между существующими ресурсами."""
+    """Resource conflict."""
 
     message = "Resource cannot be processed"
     code = "resource_conflict"
@@ -52,7 +52,7 @@ class ConflictError(NetflixVoiceAssistantError):
 
 
 class ImproperlyConfiguredError(NetflixVoiceAssistantError):
-    """Неверная конфигурация."""
+    """Improperly configured service."""
 
     message = "Improperly configured service"
     code = "improperly_configured"
@@ -60,7 +60,7 @@ class ImproperlyConfiguredError(NetflixVoiceAssistantError):
 
 
 class AuthorizationError(NetflixVoiceAssistantError):
-    """Ошибка при авторизации."""
+    """Authorization error."""
 
     message = "Authorization error"
     code = "authorization_error"
@@ -68,7 +68,7 @@ class AuthorizationError(NetflixVoiceAssistantError):
 
 
 class RequiredHeaderMissingError(NetflixVoiceAssistantError):
-    """Отсутствует обязательный заголовок в запросе."""
+    """Required header is missing in the request."""
 
     message = "Required header is missing"
     code = "missing_header"

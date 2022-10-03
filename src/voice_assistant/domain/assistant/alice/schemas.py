@@ -6,7 +6,7 @@ from ..schemas import AssistantRequest, AssistantResponse, IntentChoice
 
 
 class NluField(BaseOrjsonSchema):
-    """Поле `nlu` в запросе от Яндекс.Диалогов."""
+    """Field `nlu` in a Yandex.Dialogs request."""
 
     tokens: list | None = Field(default_factory=list)
     entities: list | None = Field(default_factory=list)
@@ -14,7 +14,7 @@ class NluField(BaseOrjsonSchema):
 
     @validator("intents", pre=True)
     def remove_redundant_intents(cls, value: dict[str, dict]) -> dict[IntentChoice, dict]:
-        """Убирает лишние интенты из запроса от Яндекс.Диалогов."""
+        """Remove redundant intents from Yandex.Dialog request."""
         for key in list(value.keys()):
             try:
                 _ = IntentChoice(key)
@@ -24,7 +24,7 @@ class NluField(BaseOrjsonSchema):
 
 
 class RequestField(BaseOrjsonSchema):
-    """Поле `request` в запросе от Яндекс.Диалогов."""
+    """Field `request` in a Yandex.Dialogs request."""
 
     command: str
     original_utterance: str
@@ -32,7 +32,7 @@ class RequestField(BaseOrjsonSchema):
 
 
 class AliceRequest(AssistantRequest):
-    """Запрос от Яндекс.Диалогов."""
+    """Request from Yandex.Dialogs."""
 
     meta: dict
     request: RequestField
@@ -42,7 +42,7 @@ class AliceRequest(AssistantRequest):
 
 
 class AliceResponse(AssistantResponse):
-    """Ответ для Яндекс.Диалогов."""
+    """Response for Yandex.Dialogs."""
 
     response: dict
     version: str

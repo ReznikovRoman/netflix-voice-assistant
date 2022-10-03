@@ -7,7 +7,7 @@ def orjson_dumps(value, *, default):
 
 
 class BaseOrjsonSchema(BaseModel):
-    """Базовая модель Pydantic с использованием orjson."""
+    """Base Pydantic orjson schema."""
 
     class Config:
         json_loads = orjson.loads

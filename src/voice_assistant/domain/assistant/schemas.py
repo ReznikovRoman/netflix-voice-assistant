@@ -7,20 +7,20 @@ from voice_assistant.domain.assistant.enums import IntentChoice
 
 
 class AssistantRequest(BaseOrjsonSchema):
-    """Базовый класс запроса от провайдера."""
+    """Base assistant request from provider."""
 
     intent: IntentChoice = IntentChoice.NOT_RECOGNIZED
-    search_query: str | None = None  # TODO: возможно можно сделать поле обязательным
+    search_query: str | None = None
 
 
 class AssistantResponse(BaseOrjsonSchema):
-    """Базовый класс ответа для провайдера."""
+    """Base assistant response for provider."""
 
     text: str
 
 
 class FilmShortDetail(BaseModel):
-    """Короткая информация о фильме."""
+    """Film short details."""
 
     film_id: uuid.UUID
     title: str
@@ -28,7 +28,7 @@ class FilmShortDetail(BaseModel):
 
 
 class FilmFullDetail(BaseModel):
-    """Полная информация о фильме."""
+    """Film full details."""
 
     film_id: uuid.UUID
     title: str
@@ -39,13 +39,13 @@ class FilmFullDetail(BaseModel):
 
 
 class PersonShortDetail(BaseModel):
-    """Короткая информация о персоне."""
+    """Person short details."""
 
     person_id: uuid.UUID
     full_name: str
 
 
 class FilmList(BaseModel):
-    """Список фильмов в формате строки."""
+    """Film list, comma-separated."""
 
     films: str

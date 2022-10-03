@@ -8,21 +8,21 @@ from .schemas import AssistantRequest, AssistantResponse
 
 
 class BaseAssistantService(abc.ABC):
-    """Базовый сервис голосового ассистента."""
+    """Base voice assistant service."""
 
     @abc.abstractmethod
     async def process_request(self, request: AssistantRequest, /) -> AssistantResponse:
-        """Обработка запроса пользователя."""
+        """Process provider request."""
 
     @abc.abstractmethod
     def build_request_from_provider_data(self, data: dict, /) -> AssistantRequest:
-        """Преобразование данных от провайдера в доменный объект."""
+        """Transform data from provider request to a domain object (provider-specific request)."""
 
 
 def get_assistant_service(
     assistant_service_factory: Factory[BaseAssistantService], *, provider: str,
 ) -> BaseAssistantService:
-    """Получение класса для работы с провайдером по названию."""
+    """Get a provider-specific service class by slug."""
     try:
         return assistant_service_factory(provider)
     except NoSuchProviderError:

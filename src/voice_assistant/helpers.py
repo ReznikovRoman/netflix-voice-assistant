@@ -7,6 +7,6 @@ sentinel: Any = object()
 
 
 def resolve_callables(mapping: dict) -> Iterator[tuple[Any, Any]]:
-    """Генерация пар ключ-значение из `mapping`, где значения могут быть callable объектами."""
+    """Generate key-value pairs from mapping, where values can be `callable` objects."""
     for key, value in mapping.items():
         yield key, value() if callable(value) else value

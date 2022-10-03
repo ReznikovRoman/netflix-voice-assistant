@@ -11,13 +11,13 @@ from .services import BaseAssistantService, get_assistant_service
 
 
 class AssistantProviderDispatcher:
-    """Диспатчер провайдеров голосового помощника."""
+    """Dispatcher of voice assistant providers."""
 
     def __init__(self, assistant_service_factory: Factory[BaseAssistantService]) -> None:
         self._assistant_service_factory = assistant_service_factory
 
     async def dispatch_provider(self, provider: AssistantProviderSlug, /, *, data: dict) -> AssistantResponse:
-        """Выбор корректного сервиса для данного провайдера голосового ассистента."""
+        """Select a correct service by the given voice assistant provider."""
         assistant_service = get_assistant_service(self._assistant_service_factory, provider=provider)
         provider_request = assistant_service.build_request_from_provider_data(data)
         match provider:
@@ -29,14 +29,14 @@ class AssistantProviderDispatcher:
 
 
 class IntentDispatcher:
-    """Диспатчер интентов."""
+    """Intents dispatcher."""
 
     def __init__(self, movie_repository: MovieRepository) -> None:
         assert isinstance(movie_repository, MovieRepository)
         self._movie_repository = movie_repository
 
     async def dispatch_intent_by_request(self, assistant_request: AssistantRequest, /) -> AssistantResponse:
-        """Выбор нужного ответа пользователю на основе интента."""
+        """Select a correct response handler by provider's request data."""
         match assistant_request.intent:
             case IntentChoice.FILM_ACTORS:
                 response = await self.get_film_actors(assistant_request.search_query)
@@ -59,7 +59,7 @@ class IntentDispatcher:
         return response
 
     async def get_film_description(self, search_query: str, /) -> AssistantResponse:
-        """Получение описания фильма."""
+        """Get film description."""
         try:
             film = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
@@ -72,7 +72,7 @@ class IntentDispatcher:
         )
 
     async def get_film_actors(self, search_query: str, /) -> AssistantResponse:
-        """Получение актеров в фильме."""
+        """Get film's actors."""
         try:
             film = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
@@ -85,7 +85,7 @@ class IntentDispatcher:
         )
 
     async def get_film_directors(self, search_query: str, /) -> AssistantResponse:
-        """Получение фильма по режиссеру."""
+        """Get film's director."""
         try:
             film = await self._get_film_by_name(search_query)
         except FilmNotFoundError:
@@ -98,7 +98,7 @@ class IntentDispatcher:
         )
 
     async def get_film_rating(self, search_query: str, /) -> AssistantResponse:
-        """Получение рейтинга фильма."""
+        """Get film's rating."""
         film = await self._movie_repository.find_movie_by_name(search_query)
         if film is None:
             return await self._get_not_found_response(search_query=search_query)
@@ -110,7 +110,7 @@ class IntentDispatcher:
         )
 
     async def search_by_director(self, search_query: str, /) -> AssistantResponse:
-        """Поиск по режиссеру."""
+        """Search films by director name."""
         person = await self._movie_repository.find_person_by_name(search_query)
         if person is None:
             return await self._get_not_found_response(search_query=search_query)
@@ -123,7 +123,7 @@ class IntentDispatcher:
         )
 
     async def _get_film_by_name(self, name: str, /) -> FilmFullDetail:
-        """Получение фильма по имени."""
+        """Get film by name."""
         film_short_detail = await self._movie_repository.find_movie_by_name(name)
         if film_short_detail is None:
             raise FilmNotFoundError
@@ -131,6 +131,6 @@ class IntentDispatcher:
 
     @staticmethod
     async def _get_not_found_response(*, search_query: str) -> AssistantResponse:
-        """Формирование ответа о том что данные не найдены."""
+        """Prepare `not found` response."""
         return AssistantResponse(
             text=DefaultResponseMessage.NOT_FOUND_MESSAGE_TEMPLATE.format(search_query=search_query))

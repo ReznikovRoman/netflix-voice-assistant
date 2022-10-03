@@ -9,11 +9,11 @@ from voice_assistant.integrations import movies
 
 
 async def dummy_resource() -> None:
-    """Функция-ресурс для перезаписи в DI контейнере."""
+    """Dummy async resource for overriding providers in a DI container."""
 
 
 class Container(containers.DeclarativeContainer):
-    """Контейнер с зависимостями."""
+    """DI container."""
 
     wiring_config = containers.WiringConfiguration(
         modules=[
@@ -24,7 +24,7 @@ class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
 
     logging = providers.Resource(configure_logger)
-    _delete_me = providers.Resource(dummy_resource)  # TODO: удалить после добавления асинхронного ресурса
+    _delete_me = providers.Resource(dummy_resource)  # TODO: remove after adding an async resource
 
     # Integrations
 
@@ -66,7 +66,7 @@ class Container(containers.DeclarativeContainer):
 
 
 def override_providers(container: Container) -> Container:
-    """Перезаписывание провайдеров с помощью стабов."""
+    """Overriding providers with stubs."""
     if not container.config.USE_STUBS():
         return container
     container.movie_client.override(providers.Singleton(MovieClientStub))
