@@ -42,7 +42,6 @@ docker-compose files:
 To run docker containers, you need to create a `.env` file in the root directory.
 
 **`.env` example:**
-
 ```dotenv
 ENV=.env
 
